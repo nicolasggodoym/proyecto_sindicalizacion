@@ -1,0 +1,23 @@
+rm(list=ls())
+options(scipen=999)
+#Cargar librerías
+pacman::p_load(dplyr, sjmisc, readxl, sjlabelled)
+#Cargar base de datos
+setwd("/Volumes/Nico Godoy/Sociología/Tercer año/Primer semestre/Trabajos/Estadística")
+base <- read_xlsx("Copia de Base OHL 1979-2017_Publica.xlsx")
+View(base)
+#Seleccionar variables
+base_proc <- base%>%select (tc, duracion, ddpp)
+sjlabelled::get_label(base_proc)
+#Descriptivo
+frq(base_proc$tc)
+frq(base_proc$nnot)
+#Etiquetado
+base_proc <- base_proc %>% rename("trabajadores"=tc)
+base_proc$trabajadores <- set_label(x=base_proc$trabajadores, 
+                                    label="Trabajadores involucrados")
+base_proc$duracion <- set_label(x=base_proc$duracion,
+                                label="Duracion de la huelga en dias")
+#Guardar
+save(base_proc, file="/Volumes/Nico Godoy/Sociología/Tercer año/Primer semestre/Trabajos/Estadística/baseohl.RData")
+

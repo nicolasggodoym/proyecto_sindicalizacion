@@ -188,7 +188,8 @@ c00 = c00 %>%
          company_size = o13,
          rama,
          ciuo = oficio,
-         cise = o10) %>%
+         cise = o10,
+         pco1) %>%
   mutate_at(vars(everything(), -company_size), ~as.numeric(.)) %>% 
   mutate(gender = car::recode(.$gender, c("1 = 'Male';
                                       2 = 'Female'"), as.factor = T),
@@ -200,7 +201,9 @@ c00 = c00 %>%
                                       11 = '4. Completed tertiary or more';
                                       99 = NA"), 
                             as.factor = T),
-         unionized =  factor(ifelse(unionized %in% c(10, 18), "1", "0")),
+         unionized =  factor(case_when(unionized %in% c(10, 18) ~ "1", 
+                                       !unionized %in% c(10, 18, 99) &  !is.na(unionized) ~ "0",
+                                       TRUE ~ NA_character_)),
          contract = car::recode(.$contract, c("c(1,2,3) = 1;
                                               c(4,5) = 0"),
                                 as.factor = T),
@@ -264,7 +267,8 @@ c03 = c03 %>%
          company_size = o14,
          rama, 
          ciuo = oficio,
-         cise = o9) %>% 
+         cise = o9,
+         pco1) %>% 
   mutate_at(vars(everything(), -company_size), ~as.numeric(.)) %>% 
   mutate(gender = car::recode(.$gender, c("1 = 'Male';
                                       2 = 'Female'"), as.factor = T),
@@ -276,7 +280,9 @@ c03 = c03 %>%
                                       11 = '4. Completed tertiary or more';
                                       99 = NA"), 
                             as.factor = T),
-         unionized =  factor(ifelse(unionized %in% c(11, 20), "1", "0")),
+         unionized =  factor(case_when(unionized %in% c(11, 20) ~ "1", 
+                                       !unionized %in% c(11, 20, 99) &  !is.na(unionized) ~ "0",
+                                       TRUE ~ NA_character_)),
          contract = car::recode(.$contract, c("c(1,2) = 1;
                                               3 = 0;
                                               9 = NA"),
@@ -344,7 +350,8 @@ c13 = c13 %>%
          company_size = o25,
          rama = rama1, 
          ciuo = oficio1,
-         cise = o15) %>% 
+         cise = o15,
+         pco1) %>% 
   mutate_at(vars(everything(), -company_size), ~as.numeric(.)) %>% 
   mutate(gender = car::recode(.$gender, c("1 = 'Male';
                                       2 = 'Female'"), as.factor = T),
@@ -356,7 +363,9 @@ c13 = c13 %>%
                                       c(10,11,12) = '4. Completed tertiary or more';
                                       99 = NA"), 
                             as.factor = T),
-         unionized =  factor(ifelse(unionized == 12, "1", "0")),
+         unionized =  factor(case_when(unionized == 12 ~ "1", 
+                                       !unionized %in% c(12, 99) &  !is.na(unionized) ~ "0",
+                                       TRUE ~ NA_character_)),
          contract = car::recode(.$contract, c("c(1,2) = 1;
                                               3 = 0;
                                               9 = NA"),
@@ -432,7 +441,8 @@ c15 = c15 %>%
          company_size = o23,
          rama = rama1, 
          ciuo = oficio1,
-         cise = o15) %>% 
+         cise = o15,
+         pco1) %>% 
   mutate_at(vars(everything(), -company_size), ~as.numeric(.)) %>% 
   mutate(gender = car::recode(.$gender, c("1 = 'Male';
                                       2 = 'Female'"), as.factor = T),
@@ -444,7 +454,9 @@ c15 = c15 %>%
                                       c(10,11,12) = '4. Completed tertiary or more';
                                       99 = NA"), 
                             as.factor = T),
-         unionized =  factor(ifelse(unionized == 12, "1", "0")),
+         unionized =  factor(case_when(unionized == 12 ~ "1", 
+                                       !unionized %in% c(12, 99) &  !is.na(unionized) ~ "0",
+                                       TRUE ~ NA_character_)),
          unionized2 = factor(case_when(if_any(starts_with("p_"), ~ . == 1) ~ "1",
                                        if_any(starts_with("p_"), ~ . == 2) ~ "0",
                                        TRUE ~ NA_character_)),
@@ -494,7 +506,8 @@ c15 = c15 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
-         year = 2015)
+         year = 2015) %>% 
+  select(-c(starts_with("p_")))
 
 # 2017 --------------------------------------------------------------------
 
@@ -520,7 +533,8 @@ c17 = c17 %>%
          company_size = o23,
          rama = rama1, 
          ciuo = oficio1,
-         cise = o15) %>% 
+         cise = o15,
+         pco1) %>% 
   mutate_at(vars(everything(), -company_size), ~as.numeric(.)) %>% 
   mutate(gender = car::recode(.$gender, c("1 = 'Male';
                                       2 = 'Female'"), as.factor = T),
@@ -531,7 +545,9 @@ c17 = c17 %>%
                                       c(7,8,9) = '3. Technical degree (completed) or incomplete tertiary';
                                       c(10,11,12) = '4. Completed tertiary or more';
                                       99 = NA")),
-         unionized =  factor(ifelse(unionized == 12, '1', '0')),
+         unionized =  factor(case_when(unionized == 12 ~ "1", 
+                                       !unionized %in% c(12, 99) &  !is.na(unionized) ~ "0",
+                                       TRUE ~ NA_character_)),
          unionized2 = factor(case_when(if_any(starts_with("p_"), ~ . == 1) ~ "1",
                                        if_any(starts_with("p_"), ~ . == 2) ~ "0",
                                        TRUE ~ NA_character_)),
@@ -581,7 +597,8 @@ c17 = c17 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
-         year = 2017)
+         year = 2017) %>% 
+  select(-c(starts_with("p_")))
 
 
 saveRDS(c00 ,"output/data/c00.rds")
