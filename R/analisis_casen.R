@@ -15,7 +15,7 @@ data = readRDS("output/data/data.rds")
 
 # Crear gráficos ----------------------------------------------------------
 a = data %>% 
-  filter(salaried_selfempl == 1) %>% 
+  filter(salaried == 1 & private_sector == 1) %>% 
   select(id, exp, strat, year, unionized) %>% 
   na.omit() %>% 
   as_survey_design(#ids = unit,
@@ -39,7 +39,7 @@ a %>%
 ggsave("output/img/unionized.jpeg", dpi = 500)
 
 a = data %>% 
-  filter(salaried_selfempl == 1) %>% 
+  filter(salaried == 1 & private_sector == 1) %>% 
   select(id, exp, strat, unit, year, unionized2) %>% 
   na.omit() %>% 
   as_survey_design(ids = unit,

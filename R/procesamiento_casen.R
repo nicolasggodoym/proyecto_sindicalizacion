@@ -248,6 +248,10 @@ c00 = c00 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
+         salaried = car::recode(.$cise, c("c(3,4,5,6,7) = 1;
+                                                   c(1,2) = 0;
+                                                   c(8,9) = NA"), 
+                                         as.factor = T),
          year = 2000)
 
 # 2003 --------------------------------------------------------------------
@@ -329,6 +333,10 @@ c03 = c03 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
+         salaried = car::recode(.$cise, c("c(3,4,5,6,7) = 1;
+                                                   c(1,2) = 0;
+                                                   c(8,9) = NA"), 
+                                as.factor = T),
          year = 2003)
 
 # 2013 --------------------------------------------------------------------
@@ -414,6 +422,10 @@ c13 = c13 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
+         salaried = car::recode(.$cise, c("c(3,4,5,6,7) = 1;
+                                                   c(1,2) = 0;
+                                                   c(8,9) = NA"), 
+                                as.factor = T),
          subcontracted = ifelse(subcontracted == 1, 1, 0),
          year = 2013)
 
@@ -506,6 +518,10 @@ c15 = c15 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
+         salaried = car::recode(.$cise, c("c(3,4,5,6,7) = 1;
+                                                   c(1,2) = 0;
+                                                   c(8,9) = NA"), 
+                                as.factor = T),
          year = 2015) %>% 
   select(-c(starts_with("p_")))
 
@@ -597,6 +613,10 @@ c17 = c17 %>%
                                                    c(1) = 0;
                                                    c(8,9) = NA"), 
                                          as.factor = T),
+         salaried = car::recode(.$cise, c("c(3,4,5,6,7) = 1;
+                                                   c(1,2) = 0;
+                                                   c(8,9) = NA"), 
+                                as.factor = T),
          year = 2017) %>% 
   select(-c(starts_with("p_")))
 
