@@ -1,0 +1,26 @@
+{
+    "id": "BD60BD8E",
+    "path": "~/GitHub/proyecto_sindicalizacion/R/analisis_dt_ohl.R",
+    "project_path": "R/analisis_dt_ohl.R",
+    "type": "r_source",
+    "hash": "477448164",
+    "contents": "",
+    "dirty": false,
+    "created": 1688690275263.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "138,39",
+        "scrollLine": "92"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1688690542,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1688690542726,
+    "read_only": false,
+    "read_only_alternatives": []
+}

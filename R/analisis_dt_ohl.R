@@ -89,21 +89,21 @@ lista = list()
 point = c(9:19)
 
 for (i in 1:9) {
-  a = dt %>% 
+  a = ohl %>% 
     filter(ano %in% c(1999:2019)) %>% 
     group_by(ano, actividad_raw) %>% 
-    summarise(n = round(mean(tasa_sind_per, na.rm = T), 2)) %>%
-    filter(actividad_raw == levels(dt$actividad_raw)[i]) %>% 
+    summarise(n = round(mean(tc, na.rm = T), 2)) %>%
+    filter(actividad_raw == levels(ohl$actividad_raw)[i]) %>% 
     ggplot(aes(x = ano, y = n)) +
     geom_line() +
     geom_point(shape = point[i], size = 2, color = "black") +
-    labs(subtitle = str_wrap(levels(dt$actividad_raw)[i], width = 32),
+    labs(subtitle = str_wrap(levels(ohl$actividad_raw)[i], width = 32),
          caption = "",
          x = "Año",
          y = "") +
     #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
     scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
-    scale_y_continuous(limits = c(0,100), n.breaks = 5) +
+    scale_y_continuous(limits = c(0,3000), n.breaks = 5) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90)) 
   lista[[i]] = a
@@ -113,7 +113,7 @@ wrap_plots(lista,
            ncol = 3, 
            nrow = 3)
 
-ggsave("output/img/tasa_sind_act.jpg")
+ggsave("output/img/trab_act.jpg")
 
 # Tasa de afiliación sindical  ------------------------------------
 
