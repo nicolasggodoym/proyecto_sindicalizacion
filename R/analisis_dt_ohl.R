@@ -10,12 +10,21 @@ pacman::p_load(tidyverse,
                ggrepel,
                patchwork)
 # Cargar datos ------------------------------------------------------------
-dt = read_xlsx("input/data/anuario_dt.xlsx",
-               sheet = "resumen",
-               range = "B1:J341") %>% 
-  mutate(actividad_raw = factor(actividad_raw))
+# dt = read_xlsx("input/data/anuario_dt.xlsx",
+#                sheet = "resumen",
+#                range = "B1:J341") %>% 
+#   mutate(actividad_raw = factor(actividad_raw)) %>% 
+#   filter(ano %in% c(1999:2019) & actividad_raw != "Total") %>% 
+#   select(-actividad_sintesis)
+# 
+# ohl = readRDS("output/data/ohl.rds")
+# 
+# a = merge(dt, ohl, 
+#           by = c("ano", "actividad_raw"),
+#           all = T) %>% 
+#   replace_na(value = 0)
 
-ohl = readRDS("output/data/ohl.rds")
+saveRDS(a, "output/data/data.RDS")
 
 # Gráficos ----------------------------------------------------------------
 #Son todos por rama

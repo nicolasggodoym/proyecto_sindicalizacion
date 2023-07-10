@@ -1,12 +1,12 @@
 
 # Preparación de datos ----------------------------------------------------
-
+pacman::p_load(tidyverse, sjmisc)
 # Cargar datos ------------------------------------------------------------
 ohl <- read.csv2("input/data/OHL1979_2020.csv", na.strings = "")
 
 # Selección y filtrado ----------------------------------------------------
 ohl_p <- ohl %>% 
-  filter(yr %in% c(1999:2019) & inst %in% c(1,2)) %>% 
+  filter(yr %in% c(1998:2019) & inst %in% c(1,2)) %>% 
   select(sector2 = ciuur2,
          sector3 = ciuur3,
          sector4 = ciuur4,
@@ -36,21 +36,32 @@ ohl_p <- ohl %>%
          dptp = as.numeric(gsub(",", ".", .$dptp)),
          leg = ifelse(leg == 1, 1, 0),
          extra_leg = ifelse(leg == 0, 1, 0)) %>% 
-  rowwise() %>% 
-  mutate(
-         n_huelga = sum(leg, extra_leg, na.rm = T)
-         ) %>% 
+  group_by(ano, actividad_raw) %>% 
+  summarise(n_huelgas = n(),
+            dptp = mean(dptp, na.rm = T),
+            tc = mean(tc, na.rm = T),
+            leg = mean(leg, na.rm = T),
+            extra_leg = mean(extra_leg, na.rm = T)) %>% 
   ungroup() %>% 
-  select(ano,
-         actividad_raw,
-         duracion,
-         ddpp,
-         rangoemp,
-         tc,
-         n_huelga,
-         leg,
-         extra_leg,
-         dptp) 
+  group_by(actividad_raw) %>% 
+  mutate_at(vars(n_huelgas_lag = n_huelgas,
+                 dptp_lag = dptp,
+                 tc_lag = tc,
+                 leg_lag = leg,
+                 extra_leg_lag = extra_leg),
+            ~ lag(.)) %>% 
+  # select(ano,
+  #        actividad_raw,
+  #        duracion,
+  #        ddpp,
+  #        rangoemp,
+  #        tc,
+  #        n_huelga,
+  #        leg,
+  #        extra_leg,
+  #        dptp) %>% 
+  filter(ano %in% c(1999:2019)) %>% 
+  na.omit()
 
 # Exportar datos ----------------------------------------------------------
 
