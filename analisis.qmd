@@ -1,0 +1,334 @@
+---
+title: "Análisis datos sindicalización"
+format: 
+  html: 
+    toc: true
+    toc-title: "Contenidos"
+    embed-resources: true
+---
+
+```{r, echo = F}
+pacman::p_load(tidyverse, ggplot2, RColorBrewer, patchwork, ggrepel)
+data = readRDS("output/data/data.rds")
+```
+
+```{css, echo = FALSE}
+.justify {
+  text-align: justify !important
+}
+```
+
+
+::: {.justify}
+
+## N° de huelgas
+::: panel-tabset
+## Fig. 1
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+lista = list()
+
+point = c(9:19)
+
+for (i in 1:9) {
+  a = data %>% 
+    filter(actividad_raw == levels(data$actividad_raw)[i]) %>% 
+    ggplot(aes(x = ano, y = n_huelgas)) +
+    geom_line() +
+    geom_point(shape = point[i], size = 2, color = "black") +
+    labs(subtitle = str_wrap(levels(data$actividad_raw)[i], width = 32),
+         caption = "",
+         x = "Año",
+         y = "") +
+    #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+    scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+    scale_y_continuous(limits = c(0,100), n.breaks = 5) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) 
+  lista[[i]] = a
+}
+
+wrap_plots(lista,
+           ncol = 3, 
+           nrow = 3)
+```
+
+## Fig. 2
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+data %>% 
+  ggplot(aes(x = ano, y = n_huelgas, color = actividad_raw)) +
+  geom_line() +
+  #geom_point(shape = c(9:19), size = 2, color = "black") +
+  labs(color = "Actividad económica",
+       caption = "",
+       x = "Año",
+       y = "") +
+  #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+  scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+  scale_y_continuous(limits = c(0,100), n.breaks = 5) +
+  scale_color_brewer(palette = "Set1") +
+  scale_colour_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+:::
+
+## Días-personas de trabajo perdidos
+::: panel-tabset
+## Max. = 15.000 (1)
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+lista = list()
+
+point = c(9:19)
+
+for (i in 1:9) {
+  a = data %>% 
+    filter(actividad_raw == levels(data$actividad_raw)[i]) %>% 
+    ggplot(aes(x = ano, y =dptp)) +
+    geom_line() +
+    geom_point(shape = point[i], size = 2, color = "black") +
+    labs(subtitle = str_wrap(levels(data$actividad_raw)[i], width = 32),
+         caption = "",
+         x = "Año",
+         y = "") +
+    #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+    scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+    scale_y_continuous(limits = c(0,15000), n.breaks = 5) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) 
+  lista[[i]] = a
+}
+
+wrap_plots(lista,
+           ncol = 3, 
+           nrow = 3)
+```
+
+## Max. = 40.000 (1)
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+lista = list()
+
+point = c(9:19)
+
+for (i in 1:9) {
+  a = data %>% 
+    filter(actividad_raw == levels(data$actividad_raw)[i]) %>% 
+    ggplot(aes(x = ano, y =dptp)) +
+    geom_line() +
+    geom_point(shape = point[i], size = 2, color = "black") +
+    labs(subtitle = str_wrap(levels(data$actividad_raw)[i], width = 32),
+         caption = "",
+         x = "Año",
+         y = "") +
+    #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+    scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+    scale_y_continuous(limits = c(0,40000), n.breaks = 5) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) 
+  lista[[i]] = a
+}
+
+wrap_plots(lista,
+           ncol = 3, 
+           nrow = 3)
+```
+
+## Max. = 15.000 (2)
+
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+data %>% 
+  ggplot(aes(x = ano, y = dptp, color = actividad_raw)) +
+  geom_line() +
+  #geom_point(shape = c(9:19), size = 2, color = "black") +
+  labs(color = "Actividad económica",
+       caption = "",
+       x = "Año",
+       y = "") +
+  #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+  scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+  scale_y_continuous(limits = c(0,15000), n.breaks = 5) +
+  scale_color_brewer(palette = "Set1") +
+  scale_colour_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+
+## Max. = 40.000 (2)
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+data %>% 
+  ggplot(aes(x = ano, y = dptp, color = actividad_raw)) +
+  geom_line() +
+  #geom_point(shape = c(9:19), size = 2, color = "black") +
+  labs(color = "Actividad económica",
+       caption = "",
+       x = "Año",
+       y = "") +
+  #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+  scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+  scale_y_continuous(limits = c(0,40000), n.breaks = 5) +
+  scale_color_brewer(palette = "Set1") +
+  scale_colour_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+:::
+## Promedio de trabajadores involucrados en huelgas
+::: panel-tabset
+## Fig. 1
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+lista = list()
+
+point = c(9:19)
+
+for (i in 1:9) {
+  a = data %>% 
+    filter(actividad_raw == levels(data$actividad_raw)[i]) %>% 
+    ggplot(aes(x = ano, y = tc)) +
+    geom_line() +
+    geom_point(shape = point[i], size = 2, color = "black") +
+    labs(subtitle = str_wrap(levels(data$actividad_raw)[i], width = 32),
+         caption = "",
+         x = "Año",
+         y = "") +
+    #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+    scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+    scale_y_continuous(limits = c(0,3000), n.breaks = 5) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) 
+  lista[[i]] = a
+}
+
+wrap_plots(lista,
+           ncol = 3, 
+           nrow = 3)
+```
+## Fig. 2
+
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+data %>% 
+  ggplot(aes(x = ano, y = tc, color = actividad_raw)) +
+  geom_line() +
+  #geom_point(shape = c(9:19), size = 2, color = "black") +
+  labs(color = "Actividad económica",
+       caption = "",
+       x = "Año",
+       y = "") +
+  #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+  scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+  scale_y_continuous(limits = c(0,3000), n.breaks = 5) +
+  scale_color_brewer(palette = "Set1") +
+  scale_colour_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+:::
+
+
+## Tasa de afiliación sindical 
+::: panel-tabset
+## Fig. 1
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+lista = list()
+
+point = c(9:19)
+
+for (i in 1:9) {
+  a = data %>% 
+    filter(actividad_raw == levels(data$actividad_raw)[i]) %>% 
+    ggplot(aes(x = ano, y = tasa_sind_per)) +
+    geom_line() +
+    geom_point(shape = point[i], size = 2, color = "black") +
+    labs(subtitle = str_wrap(levels(data$actividad_raw)[i], width = 32),
+         caption = "",
+         x = "Año",
+         y = "") +
+    #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+    scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+    scale_y_continuous(limits = c(0,100), n.breaks = 5) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) 
+  lista[[i]] = a
+}
+
+wrap_plots(lista,
+           ncol = 3, 
+           nrow = 3)
+```
+## Fig. 2
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+data %>% 
+  ggplot(aes(x = ano, y = tasa_sind_per, color = actividad_raw)) +
+  geom_line() +
+  #geom_point(shape = c(9:19), size = 2, color = "black") +
+  labs(color = "Actividad económica",
+       caption = "",
+       x = "Año",
+       y = "") +
+  #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+  scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+  scale_y_continuous(limits = c(0,100), n.breaks = 5) +
+  scale_color_brewer(palette = "Set1") +
+  scale_colour_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+:::
+
+## Número de sindicatos por cada mil trabajadores
+::: panel-tabset
+## Fig. 1
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+lista = list()
+
+point = c(9:19)
+
+for (i in 1:9) {
+  a = data %>% 
+    filter(actividad_raw == levels(data$actividad_raw)[i]) %>% 
+    ggplot(aes(x = ano, y = n_sind_mil)) +
+    geom_line() +
+    geom_point(shape = point[i], size = 2, color = "black") +
+    labs(subtitle = str_wrap(levels(data$actividad_raw)[i], width = 32),
+         caption = "",
+         x = "Año",
+         y = "") +
+    #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+    scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+    scale_y_continuous(limits = c(0,5), n.breaks = 5) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) 
+  lista[[i]] = a
+}
+
+wrap_plots(lista,
+           ncol = 3, 
+           nrow = 3)
+```
+
+## Fig. 2
+```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+data %>% 
+  ggplot(aes(x = ano, y = n_sind_mil, color = actividad_raw)) +
+  geom_line() +
+  #geom_point(shape = c(9:19), size = 2, color = "black") +
+  labs(color = "Actividad económica",
+       caption = "",
+       x = "Año",
+       y = "") +
+  #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
+  scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
+  scale_y_continuous(limits = c(0,5), n.breaks = 5) +
+  scale_color_brewer(palette = "Set1") +
+  scale_colour_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+:::
+
+
+:::
