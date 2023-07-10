@@ -53,7 +53,7 @@ wrap_plots(lista,
 ```
 
 ## Fig. 2
-```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+```{r, echo = F, warning=F, message = F}
 data %>% 
   ggplot(aes(x = ano, y = n_huelgas, color = actividad_raw)) +
   geom_line() +
@@ -135,7 +135,7 @@ wrap_plots(lista,
 
 ## Max. = 15.000 (2)
 
-```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+```{r, echo = F, warning=F, message = F}
 data %>% 
   ggplot(aes(x = ano, y = dptp, color = actividad_raw)) +
   geom_line() +
@@ -155,7 +155,7 @@ data %>%
 ```
 
 ## Max. = 40.000 (2)
-```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+```{r, echo = F, warning=F, message = F}
 data %>% 
   ggplot(aes(x = ano, y = dptp, color = actividad_raw)) +
   geom_line() +
@@ -206,7 +206,7 @@ wrap_plots(lista,
 ```
 ## Fig. 2
 
-```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+```{r, echo = F, warning=F, message = F}
 data %>% 
   ggplot(aes(x = ano, y = tc, color = actividad_raw)) +
   geom_line() +
@@ -258,7 +258,7 @@ wrap_plots(lista,
            nrow = 3)
 ```
 ## Fig. 2
-```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+```{r, echo = F, warning=F, message = F}
 data %>% 
   ggplot(aes(x = ano, y = tasa_sind_per, color = actividad_raw)) +
   geom_line() +
@@ -310,7 +310,7 @@ wrap_plots(lista,
 ```
 
 ## Fig. 2
-```{r, echo = F, warning=F, message = F, fig.height=9, fig.width=9}
+```{r, echo = F, warning=F, message = F}
 data %>% 
   ggplot(aes(x = ano, y = n_sind_mil, color = actividad_raw)) +
   geom_line() +
