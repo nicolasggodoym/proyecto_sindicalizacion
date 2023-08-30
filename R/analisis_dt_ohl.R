@@ -7,8 +7,10 @@ pacman::p_load(tidyverse,
                ggplot2,
                sjmisc, 
                readxl,
+               writexl,
                ggrepel,
                patchwork)
+
 # Cargar datos ------------------------------------------------------------
 dt = read_xlsx("input/data/anuario_dt.xlsx",
                sheet = "resumen",
@@ -16,6 +18,21 @@ dt = read_xlsx("input/data/anuario_dt.xlsx",
   mutate(actividad_raw = factor(actividad_raw))
 
 ohl = readRDS("output/data/ohl.rds")
+
+# data = merge(dt %>% 
+#                filter(ano %in% c(1999:2019) & !is.na(actividad_raw)) %>% 
+#                select(ano, actividad_raw, afiliados, ocupados_autoemp, tasa_sind, tasa_sind_per,
+#                       n_sind, n_sind_mil),
+#              ohl %>% 
+#                filter(ano %in% c(1999:2019) & !is.na(actividad_raw)) %>% 
+#                group_by(ano, actividad_raw) %>% 
+#                summarise(n_huelgas = n(),
+#                          dptp = round(mean(dptp, na.rm = T), 2),
+#                          tc = round(mean(tc, na.rm = T), 2)) %>% 
+#                ungroup(),
+#              by = c("ano", "actividad_raw"))
+
+# write_xlsx(data, "output/data/data_graficos_dtohl.xlsx")
 
 # Gráficos ----------------------------------------------------------------
 #Son todos por rama
@@ -169,7 +186,7 @@ for (i in 1:9) {
          y = "") +
     #geom_text_repel(aes(label = paste(n, "%")), colour = "black") +
     scale_x_continuous(limits = c(1999, 2019), n.breaks = 20) +
-    scale_y_continuous(limits = c(0,5), n.breaks = 5) +
+    scale_y_continuous(limits = c(0,6), n.breaks = 6) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90)) 
   lista[[i]] = a
