@@ -25,6 +25,8 @@ data.list = setNames(data.list, files %>% str_remove("ene-"))
 #   map(~colnames(.x))
 
 
+data.list[["2019"]] = data.list[["2019"]] %>% 
+  rename(b1_ciuo88 = b1)
 
 data.list = data.list %>% 
   map_if(., ~ncol(.x) == 40, 
@@ -35,7 +37,8 @@ data.list = data.list %>%
                              id = hogar, 
                              fe = fact, 
                              ciiu = p07,
-                             cise = p08) %>% 
+                             cise = p08,
+                             sexo = ) %>% 
            mutate(ciiu = case_when(ciiu == 1 ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    ciiu == 2 ~ "2. Minería",
                                    ciiu == 3 ~ "3. Industrias manufactureras",
@@ -46,7 +49,7 @@ data.list = data.list %>%
                                    ciiu == 8 ~ "8. Servicios financieros, inmobiliarios y empresariales",
                                    ciiu == 9 ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
-                  cise = ifelse(cise %in% c(2, 4, 6, 7, 8),
+                  cp_priv = ifelse(cise %in% c(2, 4, 6, 7, 8),
                                 "CP/Priv", "No")),
          .progress = T) %>% 
   map_if(., ~ncol(.x) == 43, 
@@ -68,17 +71,25 @@ data.list = data.list %>%
                                    ciiu == 8 ~ "8. Servicios financieros, inmobiliarios y empresariales",
                                    ciiu == 9 ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
-                  cise = ifelse(cise %in% c(2, 4, 6, 7, 8),
+                  cp_priv = ifelse(cise %in% c(2, 4, 6, 7, 8),
                                 "CP/Priv", "No")),
          .progress = T) %>% 
-  map_if(., ~ncol(.x) == 47, 
+  map_if(., ~ncol(.x) == 47, #Sin tipo contrato, antiguedad
          ~ .x %>% select(ano = ano_trimestre, 
                          estrato, 
                          cong = seccion, 
                          id = hogar, 
                          fe = fact, 
                          ciiu = p08,
-                         cise = p07) %>% 
+                         cise = p07,
+                         ciuo = p06,
+                         tamano_old = p09, #Tres categorías
+                         sexo,
+                         edad,
+                         horas = p10,
+                         sit = p02,
+                         neg_nt = p04,
+                         buscar = p14) %>% 
            mutate(ciiu = case_when(ciiu == 1 ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    ciiu == 2 ~ "2. Minería",
                                    ciiu == 3 ~ "3. Industrias manufactureras",
@@ -89,15 +100,23 @@ data.list = data.list %>%
                                    ciiu == 8 ~ "8. Servicios financieros, inmobiliarios y empresariales",
                                    ciiu == 9 ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
-                  cise = ifelse(cise %in% c(2, 3, 5, 6),
-                                "CP/Priv", "No")),
+                  cp_priv = ifelse(cise %in% c(2, 3, 5, 6),
+                                "CP/Priv", "No"),
+                  sexo = ifelse(sexo == 2, "Mujer", "No"),
+                  self_empl = ifelse(cise == 2, "CP", "No"),
+                  skills = ifelse(ciuo %in% c(2,3), "Experto", "No"),
+                  tamano_old = case_when(tamano_old %in% c(1,2) ~ "Micro",
+                                     tamano_old == 3 ~ "No", 
+                                     TRUE ~ NA_character_),
+                  contract_type = case_when(horas >= 40 ~ "Completa",
+                                            horas < 40 ~ "No",
+                                            TRUE ~ NA_character_),
+                  unempl = ifelse(edad >= 15 & sit %in% c(3,4,5,7) & neg_nt == 2 & buscar == 1, "Desempleado", "No")) %>% 
+           select(-c(ciuo, horas, sit, neg_nt, buscar)),
          .progress = T) %>% 
   map_if(., ~ncol(.x) %in% c(140:143), 
          ~ .x %>% 
-           mutate_at(vars(b12,
-                          b13_ciiu_rev3, 
-                       b14_ciiu_rev3, 
-                       categoria_ocupacion),
+           mutate_at(vars(-c(ano_trimestre, estrato, id_directorio, hogar, fact_cal)),
                      ~haven::as_factor(.)) %>% 
            select(ano = ano_trimestre, 
                   estrato, 
@@ -107,7 +126,14 @@ data.list = data.list %>%
                   b12,
                   ciiu13 = b13_ciiu_rev3,
                   ciiu14 = b14_ciiu_rev3,
-                  cise = categoria_ocupacion) %>% 
+                  cise = categoria_ocupacion,
+                  ciuo = b1_ciuo88,
+                  contract_duration = b9,
+                  tamano = b15_1,
+                  job_seniority = b17_ano,
+                  contract_type = c1,
+                  unempl = cae_general,
+                  sexo) %>% 
            mutate(ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
@@ -127,16 +153,21 @@ data.list = data.list %>%
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu14))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
-                  cise = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
-                                "CP/Priv", "No")) %>%
-           select(ano, estrato, cong, id, fe, ciiu, cise),
+                  cp_priv = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
+                                "CP/Priv", "No"),
+                  sexo = ifelse(sexo == "Mujer", "Mujer", "No"),
+                  skills = ifelse(ciuo %in% c("Profesionales científicos e intelectuales", "Técnicos profesionales de nivel medio"), "Experto", "No"),
+                  contract_duration = ifelse(contract_duration == "…indefinido, es decir, sin plazo de término?", "Indefinido", "No"),
+                  tamano = ifelse(tamano %in% c("Entre 50 y 199", "200 y más personas"), "Más de 50", "No"),
+                  job_seniority = str_extract(job_seniority, pattern = "\\d{4}") %>% as.numeric(.),
+                  job_seniority = ifelse(!is.na(job_seniority), ano - job_seniority, NA),
+                  contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
+                  unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
+           select(-c(ciuo, b12, ciiu13, ciiu14)),
          .progress = T) %>% 
   map_if(., ~ncol(.x) > 143, 
          ~ .x %>% 
-           mutate_at(vars(b12,
-                          b13_rev4cl_caenes, 
-                       b14_rev4cl_caenes, 
-                       categoria_ocupacion),
+           mutate_at(vars(-c(ano_trimestre, estrato, id_directorio, hogar, fact_cal)),
                      ~haven::as_factor(.)) %>% 
            select(ano = ano_trimestre, 
                   estrato, 
@@ -146,7 +177,14 @@ data.list = data.list %>%
                   b12,
                   ciiu13 = b13_rev4cl_caenes,
                   ciiu14 = b14_rev4cl_caenes,
-                  cise = categoria_ocupacion) %>% 
+                  cise = categoria_ocupacion,
+                  ciuo = b1_ciuo88,
+                  contract_duration = b9,
+                  tamano = b15_1,
+                  job_seniority = b17_ano,
+                  contract_type = c1,
+                  unempl = cae_general,
+                  sexo) %>% 
            mutate(ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, silvicultura y pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
@@ -166,9 +204,17 @@ data.list = data.list %>%
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu14))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
-                  cise = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
-                                "CP/Priv", "No")) %>%
-           select(ano, estrato, cong, id, fe, ciiu, cise),
+                  cp_priv = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
+                                "CP/Priv", "No"),
+                  sexo = ifelse(sexo == "Mujer", "Mujer", "No"),
+                  skills = ifelse(ciuo %in% c("Profesionales científicos e intelectuales", "Técnicos profesionales de nivel medio"), "Experto", "No"),
+                  contract_duration = ifelse(contract_duration == "…indefinido, es decir, sin plazo de término?", "Indefinido", "No"),
+                  tamano = ifelse(tamano %in% c("Entre 50 y 199", "200 y más personas"), "Más de 50", "No"),
+                  job_seniority = str_extract(job_seniority, pattern = "\\d{4}") %>% as.numeric(.),
+                  job_seniority = ifelse(!is.na(job_seniority), ano - job_seniority, NA),
+                  contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
+                  unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
+           select(-c(ciuo, b12, ciiu13, ciiu14)),
          .progress = T)
 
 # map_if(data.list,~ncol(.x)==9,

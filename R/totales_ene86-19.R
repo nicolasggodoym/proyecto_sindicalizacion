@@ -34,17 +34,20 @@ enc = map(data.list,
 
 # Estimar -----------------------------------------------------------------
 
-enc = enc %>% 
+
+# Totales por rama --------------------------------------------------------
+
+a = enc %>% 
   map(.,
     ~.x %>% 
-      group_by(ciiu, cise) %>% 
+      group_by(ciiu, cp_priv) %>% 
       summarise(total = survey_total(na.rm = T)) %>% 
-      filter(cise == "CP/Priv" & !is.na(ciiu)) %>% 
+      filter(cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
       select(ciiu, total)) %>% 
   imap(., 
        ~.x %>% mutate(ano = .y))
 
-totales = bind_rows(enc)
+totales = bind_rows(a)
 
 total_ano = totales %>% 
   group_by(ano) %>% 
@@ -56,9 +59,59 @@ totales = rbind(totales, total_ano)
 
 totales = totales[order(totales$ano, totales$ciiu),]
 
-
-# Exportar ----------------------------------------------------------------
-
 write_xlsx(totales, "output/data/totales_ene_99-19.xlsx")
+
+# % de mujeres por rama y año ---------------------------------------------
+#sexo
+
+a = enc %>% 
+  map(.,
+      ~.x %>% 
+        group_by(ciiu, sexo) %>% 
+        summarise(female = survey_total(na.rm = T)) %>% 
+        filter(sexo == "Mujer" & !is.na(ciiu)) %>% 
+        select(ciiu, female)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+
+totales = bind_rows(a)
+
+total_ano = totales %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            female = sum(female)) %>% 
+  ungroup()
+
+totales = rbind(totales, total_ano) 
+
+totales = totales[order(totales$ano, totales$ciiu),]
+
+write_xlsx(totales, "output/data/female_ene_99-19.xlsx")
+
+# Edad promedio por rama y año ---------------------------------------------
+#edad
+
+# % de autoempleados por rama y año ---------------------------------------------
+#self_empl
+
+# % de expertiz por rama y año ---------------------------------------------
+#skills
+
+
+# % de contratos indefinidos por rama y año ---------------------------------------------
+#contract_duration
+
+# % de personas con 50 emp o más por rama y año ---------------------------------------------
+#tamano
+
+# Promedio de años de antiguedad por rama y año ---------------------------------------------
+#job_seniority
+
+# % personas con jornada completa por rama y año ---------------------------------------------
+#contract_type
+
+# % de desempleados por rama y año ---------------------------------------------
+#unempl
+
 
 
