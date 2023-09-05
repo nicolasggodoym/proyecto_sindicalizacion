@@ -133,7 +133,8 @@ data.list = data.list %>%
                   job_seniority = b17_ano,
                   contract_type = c1,
                   unempl = cae_general,
-                  sexo) %>% 
+                  sexo,
+                  edad) %>% 
            mutate(ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
@@ -156,9 +157,12 @@ data.list = data.list %>%
                   cp_priv = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
                                 "CP/Priv", "No"),
                   sexo = ifelse(sexo == "Mujer", "Mujer", "No"),
+                  self_empl = ifelse(cise %in% c("Cuenta propia"),
+                                     "CP", "No"),
                   skills = ifelse(ciuo %in% c("Profesionales científicos e intelectuales", "Técnicos profesionales de nivel medio"), "Experto", "No"),
                   contract_duration = ifelse(contract_duration == "…indefinido, es decir, sin plazo de término?", "Indefinido", "No"),
                   tamano = ifelse(tamano %in% c("Entre 50 y 199", "200 y más personas"), "Más de 50", "No"),
+                  edad = str_extract(edad, pattern = "\\d{1,3}") %>% as.numeric(.),
                   job_seniority = str_extract(job_seniority, pattern = "\\d{4}") %>% as.numeric(.),
                   job_seniority = ifelse(!is.na(job_seniority), ano - job_seniority, NA),
                   contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
@@ -184,7 +188,8 @@ data.list = data.list %>%
                   job_seniority = b17_ano,
                   contract_type = c1,
                   unempl = cae_general,
-                  sexo) %>% 
+                  sexo,
+                  edad) %>% 
            mutate(ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, silvicultura y pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
@@ -207,14 +212,18 @@ data.list = data.list %>%
                   cp_priv = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
                                 "CP/Priv", "No"),
                   sexo = ifelse(sexo == "Mujer", "Mujer", "No"),
-                  skills = ifelse(ciuo %in% c("Profesionales científicos e intelectuales", "Técnicos profesionales de nivel medio"), "Experto", "No"),
+                  self_empl = ifelse(cise %in% c("Cuenta propia"),
+                                     "CP", "No"),
+                  skills = ifelse(ciuo %in% c("Profesionales científicos e intelectuales", "Profesionales, científicos e intelectuales", 
+                                              "Técnicos profesionales de nivel medio", "Técnicos y profesionales de nivel medio"), "Experto", "No"),
                   contract_duration = ifelse(contract_duration == "…indefinido, es decir, sin plazo de término?", "Indefinido", "No"),
                   tamano = ifelse(tamano %in% c("Entre 50 y 199", "200 y más personas"), "Más de 50", "No"),
+                  edad = str_extract(edad, pattern = "\\d{1,3}") %>% as.numeric(.),
                   job_seniority = str_extract(job_seniority, pattern = "\\d{4}") %>% as.numeric(.),
                   job_seniority = ifelse(!is.na(job_seniority), ano - job_seniority, NA),
                   contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
                   unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
-           select(-c(ciuo, b12, ciiu13, ciiu14)),
+           select(-c(b12, ciiu13, ciiu14)),
          .progress = T)
 
 # map_if(data.list,~ncol(.x)==9,

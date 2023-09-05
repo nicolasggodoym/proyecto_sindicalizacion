@@ -11,7 +11,8 @@ options(survey.lonely.psu="adjust")
 pacman::p_load(tidyverse,
                survey,
                srvyr,
-               writexl)
+               writexl,
+               beepr)
 
 
 
@@ -19,7 +20,7 @@ pacman::p_load(tidyverse,
 
 load("output/data/ene_86_19.RData")
 
-olas = as.character(seq(1999, 2019))
+olas = as.character(seq(1998, 2019))
 
 data.list = data.list[olas]
 
@@ -30,7 +31,7 @@ enc = map(data.list,
                             strata = estrato,
                             weights = fe,
                             nest = T))
-
+rm(data.list, olas)
 
 # Estimar -----------------------------------------------------------------
 
@@ -42,10 +43,12 @@ a = enc %>%
     ~.x %>% 
       group_by(ciiu, cp_priv) %>% 
       summarise(total = survey_total(na.rm = T)) %>% 
+      ungroup() %>% 
       filter(cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
       select(ciiu, total)) %>% 
   imap(., 
        ~.x %>% mutate(ano = .y))
+beep(1)
 
 totales = bind_rows(a)
 
@@ -56,10 +59,10 @@ total_ano = totales %>%
   ungroup()
 
 totales = rbind(totales, total_ano) 
-
+rm(total_ano)
 totales = totales[order(totales$ano, totales$ciiu),]
 
-write_xlsx(totales, "output/data/totales_ene_99-19.xlsx")
+#write_xlsx(totales, "output/data/totales_ene_99-19.xlsx")
 
 # % de mujeres por rama y año ---------------------------------------------
 #sexo
@@ -67,51 +70,288 @@ write_xlsx(totales, "output/data/totales_ene_99-19.xlsx")
 a = enc %>% 
   map(.,
       ~.x %>% 
-        group_by(ciiu, sexo) %>% 
+        group_by(ciiu, cp_priv, sexo) %>% 
         summarise(female = survey_total(na.rm = T)) %>% 
-        filter(sexo == "Mujer" & !is.na(ciiu)) %>% 
+        ungroup() %>% 
+        filter(sexo == "Mujer" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
         select(ciiu, female)) %>% 
   imap(., 
        ~.x %>% mutate(ano = .y))
+beep(1)
 
-totales = bind_rows(a)
+female = bind_rows(a)
 
-total_ano = totales %>% 
+female_ano = female %>% 
   group_by(ano) %>% 
   summarise(ciiu = "Total",
             female = sum(female)) %>% 
   ungroup()
 
-totales = rbind(totales, total_ano) 
+female = rbind(female, female_ano) 
+rm(female_ano)
+female = female[order(female$ano, female$ciiu),]
 
-totales = totales[order(totales$ano, totales$ciiu),]
-
-write_xlsx(totales, "output/data/female_ene_99-19.xlsx")
+#write_xlsx(totales, "output/data/female_ene_99-19.xlsx")
 
 # Edad promedio por rama y año ---------------------------------------------
 #edad
 
+a = enc %>% 
+  map(.,
+      ~.x %>% 
+        group_by(ciiu, cp_priv) %>% 
+        summarise(age = survey_mean(edad, na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, age)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+age = bind_rows(a)
+
+age_ano = age %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            age = mean(age)) %>% 
+  ungroup()
+
+age = rbind(age, age_ano) 
+rm(age_ano)
+age = age[order(age$ano, age$ciiu),]
+
 # % de autoempleados por rama y año ---------------------------------------------
 #self_empl
+
+a = enc %>% 
+  map(.,
+      ~.x %>% 
+        group_by(ciiu, self_empl) %>% 
+        summarise(a = survey_total(na.rm = T)) %>% 
+        ungroup() %>% 
+        #filter(self_empl == "CP" & !is.na(ciiu)) %>% 
+        select(ciiu, self_empl = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+self_empl = bind_rows(a)
+
+self_empl_ano = self_empl %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            self_empl = sum(self_empl)) %>% 
+  ungroup()
+
+self_empl = rbind(self_empl, self_empl_ano) 
+rm(self_empl_ano)
+self_empl = self_empl[order(self_empl$ano, self_empl$ciiu),]
 
 # % de expertiz por rama y año ---------------------------------------------
 #skills
 
+a = enc %>% 
+  map(.,
+      ~.x %>% 
+        group_by(ciiu, cp_priv, skills) %>% 
+        summarise(a = survey_total(na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(skills == "Experto" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, skills = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+skills = bind_rows(a)
+
+skills_ano = skills %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            skills = sum(skills)) %>% 
+  ungroup()
+
+skills = rbind(skills, skills_ano) 
+rm(skills_ano)
+skills = skills[order(skills$ano, skills$ciiu),]
 
 # % de contratos indefinidos por rama y año ---------------------------------------------
 #contract_duration
 
+a = enc %>% 
+  map_if(., 
+      ~mean(.x$variables$ano) %in% c(2010:2019),
+      ~.x %>% 
+        group_by(ciiu, cp_priv, contract_duration) %>% 
+        summarise(a = survey_total(na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(contract_duration == "Indefinido" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, contract_duration = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+
+olas = as.character(seq(2010, 2019))
+
+a = a[olas]
+
+beep(1)
+
+contract_duration = bind_rows(a)
+
+contract_duration_ano = contract_duration %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            contract_duration = sum(contract_duration)) %>% 
+  ungroup()
+
+contract_duration = rbind(contract_duration, contract_duration_ano) 
+rm(contract_duration_ano)
+contract_duration = contract_duration[order(contract_duration$ano, contract_duration$ciiu),]
+
 # % de personas con 50 emp o más por rama y año ---------------------------------------------
 #tamano
+
+a = enc %>% 
+  map_if(., 
+         ~mean(.x$variables$ano) %in% c(2010:2019),
+      ~.x %>% 
+        group_by(ciiu, cp_priv, tamano) %>% 
+        summarise(a = survey_total(na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(tamano == "Más de 50" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, firm_size = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+olas = as.character(seq(2010, 2019))
+
+a = a[olas]
+
+tamano = bind_rows(a)
+
+tamano_ano = tamano %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            firm_size = sum(firm_size)) %>% 
+  ungroup()
+
+tamano = rbind(tamano, tamano_ano) 
+rm(tamano_ano)
+tamano = tamano[order(tamano$ano, tamano$ciiu),]
 
 # Promedio de años de antiguedad por rama y año ---------------------------------------------
 #job_seniority
 
+a = enc %>% 
+  map_if(., 
+         ~mean(.x$variables$ano) %in% c(2010:2019),
+      ~.x %>% 
+        group_by(ciiu, cp_priv) %>% 
+        summarise(a = survey_mean(job_seniority, na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, job_seniority = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+olas = as.character(seq(2010, 2019))
+
+a = a[olas]
+
+job_seniority = bind_rows(a)
+
+job_seniority_ano = job_seniority %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            job_seniority = mean(job_seniority)) %>% 
+  ungroup()
+
+job_seniority = rbind(job_seniority, job_seniority_ano) 
+rm(job_seniority_ano)
+job_seniority = job_seniority[order(job_seniority$ano, job_seniority$ciiu),]
+
 # % personas con jornada completa por rama y año ---------------------------------------------
 #contract_type
+
+a = enc %>% 
+  map_if(., 
+         ~mean(.x$variables$ano) %in% c(1999:2019),
+      ~.x %>% 
+        group_by(ciiu, cp_priv, contract_type) %>% 
+        summarise(a = survey_total(na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(contract_type == "Completa" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, contract_type = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+olas = as.character(seq(1999, 2019))
+
+a = a[olas]
+
+contract_type = bind_rows(a)
+
+contract_type_ano = contract_type %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            contract_type = sum(contract_type)) %>% 
+  ungroup()
+
+contract_type = rbind(contract_type, contract_type_ano) 
+rm(contract_type_ano)
+contract_type = contract_type[order(contract_type$ano, contract_type$ciiu),]
 
 # % de desempleados por rama y año ---------------------------------------------
 #unempl
 
+a = enc %>% 
+  map_if(., 
+         ~mean(.x$variables$ano) %in% c(1999:2019),
+      ~.x %>% 
+        group_by(ciiu, cp_priv, unempl) %>% 
+        summarise(a = survey_total(na.rm = T)) %>% 
+        ungroup() %>% 
+        filter(unempl == "Desempleado" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
+        select(ciiu, unempl = a)) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
 
+olas = as.character(seq(1999, 2019))
+
+a = a[olas]
+
+unempl = bind_rows(a)
+
+unempl_ano = unempl %>% 
+  group_by(ano) %>% 
+  summarise(ciiu = "Total",
+            unempl = sum(unempl)) %>% 
+  ungroup()
+
+unempl = rbind(unempl, unempl) 
+rm(unempl_ano)
+unempl = unempl[order(unempl$ano, unempl$ciiu),]
+
+
+# Unificar ----------------------------------------------------------------
+
+lista = list(totales,
+             female,
+             age,
+             self_empl,
+             skills,
+             contract_duration,
+             tamano,
+             job_seniority,
+             contract_type,
+             unempl)
+
+
+lista = lista %>% 
+  map_if(., 
+         ~length(names(.x)) == 4,
+         ~.x %>% select(-cp_priv))
 
