@@ -129,7 +129,7 @@ a = enc %>%
         group_by(ciiu, self_empl) %>% 
         summarise(a = survey_total(na.rm = T)) %>% 
         ungroup() %>% 
-        #filter(self_empl == "CP" & !is.na(ciiu)) %>% 
+        filter(self_empl == "CP" & !is.na(ciiu)) %>% 
         select(ciiu, self_empl = a)) %>% 
   imap(., 
        ~.x %>% mutate(ano = .y))
@@ -276,7 +276,7 @@ job_seniority = job_seniority[order(job_seniority$ano, job_seniority$ciiu),]
 
 a = enc %>% 
   map_if(., 
-         ~mean(.x$variables$ano) %in% c(1999:2019),
+         ~mean(.x$variables$ano) %in% c(1998:2019),
       ~.x %>% 
         group_by(ciiu, cp_priv, contract_type) %>% 
         summarise(a = survey_total(na.rm = T)) %>% 
@@ -287,7 +287,7 @@ a = enc %>%
        ~.x %>% mutate(ano = .y))
 beep(1)
 
-olas = as.character(seq(1999, 2019))
+olas = as.character(seq(1998, 2019))
 
 a = a[olas]
 
@@ -308,18 +308,18 @@ contract_type = contract_type[order(contract_type$ano, contract_type$ciiu),]
 
 a = enc %>% 
   map_if(., 
-         ~mean(.x$variables$ano) %in% c(1999:2019),
+         ~mean(.x$variables$ano) %in% c(1998:2019),
       ~.x %>% 
-        group_by(ciiu, cp_priv, unempl) %>% 
+        group_by(unempl) %>% 
         summarise(a = survey_total(na.rm = T)) %>% 
         ungroup() %>% 
-        filter(unempl == "Desempleado" & cp_priv == "CP/Priv" & !is.na(ciiu)) %>% 
-        select(ciiu, unempl = a)) %>% 
+        filter(unempl == "Desempleado") %>% 
+        select(unempl = a)) %>% 
   imap(., 
        ~.x %>% mutate(ano = .y))
 beep(1)
 
-olas = as.character(seq(1999, 2019))
+olas = as.character(seq(1998, 2019))
 
 a = a[olas]
 
@@ -327,15 +327,16 @@ unempl = bind_rows(a)
 
 unempl_ano = unempl %>% 
   group_by(ano) %>% 
-  summarise(ciiu = "Total",
+  summarise(#ciiu = "Total",
             unempl = sum(unempl)) %>% 
   ungroup()
 
 unempl = rbind(unempl, unempl) 
 rm(unempl_ano)
-unempl = unempl[order(unempl$ano, unempl$ciiu),]
+unempl = unempl[order(unempl$ano),]
+unempl = unique(unempl)
 
-
+#write_xlsx(unempl, "output/data/ene_unempl.xlsx")
 # Unificar ----------------------------------------------------------------
 
 lista = list(totales,
@@ -346,12 +347,29 @@ lista = list(totales,
              contract_duration,
              tamano,
              job_seniority,
-             contract_type,
-             unempl)
+             contract_type#, unempl
+             )
+
+lista = lista %>% Reduce(function(x,y) merge (x,y, all = T), .) %>% 
+  arrange(ano, ciiu) %>% 
+  mutate(self_empl = ifelse(ciiu %in% "4. Suministro de electricidad, gas y agua" & ano %in% "1998", 
+                            0, self_empl)) %>% 
+  merge(., unempl, by = "ano", all = T) %>% 
+  rowwise() %>% 
+  mutate(across(c(female, self_empl, skills, contract_duration, 
+                  firm_size, contract_type),
+                ~ifelse(!is.na(.), round((./total)*100,3), NA)),
+         unempl = ifelse(ciiu == "Total", round((unempl/total)*100,3), NA)) %>% 
+  ungroup() %>% 
+  arrange(ciiu, ano) %>% 
+  mutate(across(c(female, self_empl, skills, contract_duration, 
+                  firm_size, job_seniority, contract_type, unempl),
+                ~lag(.),
+                .names = "lag_{.col}")) %>% 
+  arrange(ano, ciiu) %>% 
+  filter(ano != "1998")
 
 
-lista = lista %>% 
-  map_if(., 
-         ~length(names(.x)) == 4,
-         ~.x %>% select(-cp_priv))
+# Exportar ----------------------------------------------------------------
 
+write_xlsx(lista, "output/data/ene_final.xlsx")

@@ -19,20 +19,29 @@ dt = read_xlsx("input/data/anuario_dt.xlsx",
 
 ohl = readRDS("output/data/ohl.rds")
 
-# data = merge(dt %>% 
-#                filter(ano %in% c(1999:2019) & !is.na(actividad_raw)) %>% 
-#                select(ano, actividad_raw, afiliados, ocupados_autoemp, tasa_sind, tasa_sind_per,
-#                       n_sind, n_sind_mil),
-#              ohl %>% 
-#                filter(ano %in% c(1999:2019) & !is.na(actividad_raw)) %>% 
-#                group_by(ano, actividad_raw) %>% 
-#                summarise(n_huelgas = n(),
-#                          dptp = round(mean(dptp, na.rm = T), 2),
-#                          tc = round(mean(tc, na.rm = T), 2)) %>% 
-#                ungroup(),
-#              by = c("ano", "actividad_raw"))
+data = merge(dt %>%
+              filter(ano %in% c(1998:2019) & !is.na(actividad_raw)) %>%
+              select(ano, actividad_raw, afiliados, ocupados_autoemp, tasa_sind, tasa_sind_per,
+                     n_sind, n_sind_mil),
+            ohl %>%
+              filter(ano %in% c(1998:2019) & !is.na(actividad_raw)) %>%
+              group_by(ano, actividad_raw) %>%
+              summarise(n_huelgas = n(),
+                        dptp = round(mean(dptp, na.rm = T), 2),
+                        tc = round(mean(tc, na.rm = T), 2)) %>%
+              ungroup(),
+            by = c("ano", "actividad_raw")) %>% 
+  arrange(actividad_raw, ano) %>% 
+  mutate(across(c(afiliados, ocupados_autoemp, tasa_sind, tasa_sind_per,
+                  n_sind, n_sind_mil, n_huelgas, dptp, tc),
+                ~lag(.),
+                .names = "lag_{.col}")) %>% 
+  arrange(ano, actividad_raw) %>% 
+  filter(ano != "1998")
 
-# write_xlsx(data, "output/data/data_graficos_dtohl.xlsx")
+
+
+ write_xlsx(data, "output/data/data_graficos_dtohl.xlsx")
 
 # Gráficos ----------------------------------------------------------------
 #Son todos por rama

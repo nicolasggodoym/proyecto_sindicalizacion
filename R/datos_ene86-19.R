@@ -123,6 +123,7 @@ data.list = data.list %>%
                   cong = id_directorio, 
                   id = hogar, 
                   fe = fact_cal, 
+                  b2, 
                   b12,
                   ciiu13 = b13_ciiu_rev3,
                   ciiu14 = b14_ciiu_rev3,
@@ -136,23 +137,32 @@ data.list = data.list %>%
                   sexo,
                   edad) %>% 
            mutate(ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Explotación de minas y canteras")) ~ "2. Minería",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Explotación de minas y canteras"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Explotación de minas y canteras")) ~ "2. Minería",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Industrias manufactureras"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Industrias manufactureras")) ~ "3. Industrias manufactureras",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Industrias manufactureras"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Industrias manufactureras")) ~ "3. Industrias manufactureras",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Suministro de electricidad, gas y agua"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Suministro de electricidad, gas y agua")) ~ "4. Suministro de electricidad, gas y agua",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Suministro de electricidad, gas y agua"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Suministro de electricidad, gas y agua")) ~ "4. Suministro de electricidad, gas y agua",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Construcción"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Construcción")) ~ "5. Construcción",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Construcción"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Construcción")) ~ "5. Construcción",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Comercio al por mayor y al por menor", "Hoteles y restaurantes"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Comercio al por mayor y al por menor", "Hoteles y restaurantes")) ~ "6. Comercio, hoteles y restaurantes",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Comercio al por mayor y al por menor", "Hoteles y restaurantes"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Comercio al por mayor y al por menor", "Hoteles y restaurantes")) ~ "6. Comercio, hoteles y restaurantes",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Transporte, almacenamiento y comunicaciones"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Transporte, almacenamiento y comunicaciones")) ~ "7. Transporte y comunicaciones",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Transporte, almacenamiento y comunicaciones"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Transporte, almacenamiento y comunicaciones")) ~ "7. Transporte y comunicaciones",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Intermediación financiera", "Actividades inmobiliarias, empresariales y de alquiler"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Intermediación financiera", "Actividades inmobiliarias, empresariales y de alquiler")) ~ "8. Servicios financieros, inmobiliarios y empresariales",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Intermediación financiera", "Actividades inmobiliarias, empresariales y de alquiler"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Intermediación financiera", "Actividades inmobiliarias, empresariales y de alquiler")) ~ "8. Servicios financieros, inmobiliarios y empresariales",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu14))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & !is.na(ciiu14)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
                   cp_priv = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
                                 "CP/Priv", "No"),
@@ -167,7 +177,7 @@ data.list = data.list %>%
                   job_seniority = ifelse(!is.na(job_seniority), ano - job_seniority, NA),
                   contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
                   unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
-           select(-c(ciuo, b12, ciiu13, ciiu14)),
+           select(-c(ciuo, b2, b12, ciiu13, ciiu14)),
          .progress = T) %>% 
   map_if(., ~ncol(.x) > 143, 
          ~ .x %>% 
@@ -178,6 +188,7 @@ data.list = data.list %>%
                   cong = id_directorio, 
                   id = hogar, 
                   fe = fact_cal, 
+                  b2,
                   b12,
                   ciiu13 = b13_rev4cl_caenes,
                   ciiu14 = b14_rev4cl_caenes,
@@ -191,23 +202,32 @@ data.list = data.list %>%
                   sexo,
                   edad) %>% 
            mutate(ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, silvicultura y pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Explotación de minas y canteras")) ~ "2. Minería",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Explotación de minas y canteras"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Explotación de minas y canteras")) ~ "2. Minería",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Industrias manufactureras"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Industrias manufactureras")) ~ "3. Industrias manufactureras",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Industrias manufactureras"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Industrias manufactureras")) ~ "3. Industrias manufactureras",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua")) ~ "4. Suministro de electricidad, gas y agua",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua")) ~ "4. Suministro de electricidad, gas y agua",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Construcción"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Construcción")) ~ "5. Construcción",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Construcción"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Construcción")) ~ "5. Construcción",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas")) ~ "6. Comercio, hoteles y restaurantes",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas")) ~ "6. Comercio, hoteles y restaurantes",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Transporte y almacenamiento", "Información y comunicaciones"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Transporte y almacenamiento", "Información y comunicaciones")) ~ "7. Transporte y comunicaciones",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Transporte y almacenamiento", "Información y comunicaciones"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Transporte y almacenamiento", "Información y comunicaciones")) ~ "7. Transporte y comunicaciones",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo"))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo")) ~ "8. Servicios financieros, inmobiliarios y empresariales",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo"))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo")) ~ "8. Servicios financieros, inmobiliarios y empresariales",
                                    (b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu14))|
-                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
+                                     (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13))|
+                                     (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & !is.na(ciiu14)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
                                    TRUE ~ NA_character_),
                   cp_priv = ifelse(cise %in% c("Cuenta propia", "Asalariado sector privado", "Personal de servicio doméstico puertas afuera", "Personal de servicio doméstico puertas adentro"),
                                 "CP/Priv", "No"),
@@ -223,7 +243,7 @@ data.list = data.list %>%
                   job_seniority = ifelse(!is.na(job_seniority), ano - job_seniority, NA),
                   contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
                   unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
-           select(-c(b12, ciiu13, ciiu14)),
+           select(-c(ciuo, b2, b12, ciiu13, ciiu14)),
          .progress = T)
 
 # map_if(data.list,~ncol(.x)==9,
