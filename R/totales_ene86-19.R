@@ -312,9 +312,10 @@ a = enc %>%
       ~.x %>% 
         group_by(unempl) %>% 
         summarise(a = survey_total(na.rm = T)) %>% 
-        ungroup() %>% 
-        filter(unempl == "Desempleado") %>% 
-        select(unempl = a)) %>% 
+        ungroup() #%>% 
+        #filter(unempl == "Desempleado") %>% 
+        #select(unempl = a)
+      ) %>% 
   imap(., 
        ~.x %>% mutate(ano = .y))
 beep(1)
@@ -336,7 +337,51 @@ rm(unempl_ano)
 unempl = unempl[order(unempl$ano),]
 unempl = unique(unempl)
 
-#write_xlsx(unempl, "output/data/ene_unempl.xlsx")
+# Ocupados ----------------------------------------------------------------
+
+a = enc %>% 
+  map(~.x %>% 
+        mutate(unempl = ifelse(cise %in% c(1:7) & edad >= 15, "PA", "NO"))) %>% 
+  map_if(., 
+         ~mean(.x$variables$ano) %in% c(1998:2019),
+         ~.x %>% 
+           group_by(unempl) %>% 
+           summarise(a = survey_total(na.rm = T)) %>% 
+           ungroup() #%>% 
+           #filter(unempl == "PA") %>% 
+           #select(unempl = a),
+           ) %>% 
+  imap(., 
+       ~.x %>% mutate(ano = .y))
+beep(1)
+
+olas = as.character(seq(1998, 2019))
+
+a = a[olas]
+
+unempl = bind_rows(a) %>% 
+  select(ano, unempl, a) %>% 
+  pivot_wider(id_cols = ano,
+              names_from = "unempl",
+              values_from = "a") %>% 
+  na.omit() %>% 
+  rowwise() %>% 
+  mutate(unempl = round((NO/sum(NO, PA, is.na(u)))*100,2)) %>% 
+  ungroup() %>% 
+  select(ano, unempl)
+
+unempl_ano = unempl %>% 
+  group_by(ano) %>% 
+  summarise(#ciiu = "Total",
+    unempl = sum(unempl)) %>% 
+  ungroup()
+
+unempl = rbind(unempl, unempl) 
+rm(unempl_ano)
+unempl = unempl[order(unempl$ano),]
+unempl = unique(unempl)
+
+write_xlsx(unempl, "output/data/ene_unempl.xlsx")
 # Unificar ----------------------------------------------------------------
 
 lista = list(totales,
@@ -347,7 +392,7 @@ lista = list(totales,
              contract_duration,
              tamano,
              job_seniority,
-             contract_type#, unempl
+             contract_type#, unempl, cise
              )
 
 lista = lista %>% Reduce(function(x,y) merge (x,y, all = T), .) %>% 

@@ -36,8 +36,8 @@ data = merge(dt %>%
                   n_sind, n_sind_mil, n_huelgas, dptp, tc),
                 ~lag(.),
                 .names = "lag_{.col}")) %>% 
-  arrange(ano, actividad_raw) %>% 
-  filter(ano != "1998")
+  arrange(ano, actividad_raw) #%>% 
+  #filter(ano != "1998")
 
 
 

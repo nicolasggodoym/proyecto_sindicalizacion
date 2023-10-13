@@ -6,7 +6,7 @@ ohl <- read.csv2("input/data/OHL1979_2020.csv", na.strings = "")
 
 # Selección y filtrado ----------------------------------------------------
 ohl_p <- ohl %>% 
-  filter(yr %in% c(1999:2019) & inst %in% c(1,2)) %>% 
+  filter(yr %in% c(1998:2019) & inst %in% c(1,2)) %>% 
   select(sector2 = ciuur2,
          sector3 = ciuur3,
          sector4 = ciuur4,
@@ -51,6 +51,12 @@ ohl_p <- ohl %>%
          leg,
          extra_leg,
          dptp) 
+
+a=ohl_p %>% 
+  group_by(ano, actividad_raw) %>% 
+  summarise(across(c(dptp, tc),
+                   ~mean(., na.rm=T)),
+            n_huelga = sum(n_huelga, na.rm=T))
 
 # Exportar datos ----------------------------------------------------------
 
