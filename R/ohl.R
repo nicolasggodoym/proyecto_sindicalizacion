@@ -54,9 +54,15 @@ ohl_p <- ohl %>%
 
 a=ohl_p %>% 
   group_by(ano, actividad_raw) %>% 
-  summarise(across(c(dptp, tc),
+  summarise(across(c(dptp, tc, duracion),
                    ~mean(., na.rm=T)),
             n_huelga = sum(n_huelga, na.rm=T))
+
+# a %>% 
+#   select(ano, actividad_raw, duracion) %>% 
+#   na.omit %>% 
+#   write_xlsx("output/data/duracion_huelgas.xlsx")
+  
 
 # Exportar datos ----------------------------------------------------------
 

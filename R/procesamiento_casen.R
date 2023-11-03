@@ -304,11 +304,11 @@ c09 = c09 %>%
   select(id = folio,
          exp = expr,
          strat = estrato,
-         contract_duration = o19,
+         contract_duration = o26,
          company_size = o14,
          job_seniority = o20, #año
          rama, 
-         cise = o19) %>% 
+         cise = o23) %>% 
   mutate_at(vars(everything(), -company_size, -id), ~as.numeric(.)) %>% 
   mutate(contract_duration = ifelse(contract_duration == 1, "1", "0"),
          company_size = ifelse(company_size %in% c("E", "F"), "1", "0"),
