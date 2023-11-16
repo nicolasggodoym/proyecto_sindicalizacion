@@ -11,7 +11,9 @@ pacman::p_load(tidyverse,
                data.table)
 
 # Cargar datos ------------------------------------------------------------
-data = read_dta("input/data/CAE_RUT_FINAL.dta")
+# data = read_dta("input/data/dt/CAE_RUT_FINAL.dta")
+# saveRDS(data, "input/data/dt/CAE_RUT_FINAL.rds")
+data = readRDS("input/data/dt/CAE_RUT_FINAL.rds")
 
 # Revisar -----------------------------------------------------------------
 proc = data %>% 
