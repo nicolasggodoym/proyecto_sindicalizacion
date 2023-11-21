@@ -7,10 +7,37 @@ pacman::p_load(tidyverse, readxl, sjmisc)
 
 # Cargar datos ------------------------------------------------------------
 
-# llave = readRDS("input/data/dt/CAE_RUT_FINAL.rds") %>% 
-#   select(rut_empresa = rut, dv, cae = id_cae2) %>% 
-#   mutate(across(c(rut_empresa, dv), ~as.character(.)),
-#          cae = as.numeric(cae))
+llave = readRDS("input/data/dt/CAE_RUT_FINAL.rds") %>%
+  select(rut_empresa = rut, dv, id_cae2) %>% 
+  mutate(across(c(rut_empresa, dv), ~as.character(.)),
+         id_cae2 = as.numeric(id_cae2)) %>% 
+  select(-dv)
+
+a = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
+            select(id_cae2, ID),
+          by = "id_cae2", all.x = T)
+
+a %>% 
+  group_by(rut_empresa, id_cae2) %>% 
+  mutate(n = n()) %>% 
+  ungroup() %>% 
+  summarise(uniq = sum(n==1),
+            uniq_p = sum(n==1)/nrow(.)*100,
+            dup = sum(n>1),
+            dup_p = sum(n>1)/nrow(.)*100)
+
+a %>% 
+  group_by(rut_empresa, ID) %>% 
+  mutate(n = n()) %>% 
+  ungroup() %>% 
+  summarise(uniq = sum(n==1),
+            uniq_p = sum(n==1)/nrow(.)*100,
+            dup = sum(n>1),
+            dup_p = sum(n>1)/nrow(.)*100)
+
+a %>% 
+  #group_by(rut_empresa) %>% 
+  summarise(serv = sum(ID %in% 39:43, na.rm=T)/nrow(.))
 
 files = list.files(path = "input/data/dt",
                    pattern = "1594")
@@ -63,6 +90,46 @@ ooss_micro = bind_rows(ooss_micro[-8]) %>%
          n_dir_tot = n_total_dirigentes)
 
 ooss_micro = bind_rows(ooss_micro, ooss_micro23)
+
+#Pasa de 168.908 a 470.622
+
+micro = merge(ooss_micro, 
+              llave, by = "rut_empresa", all.x = T)
+
+a = merge(micro, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
+            select(id_cae2, ID),
+          by = "id_cae2", all.x = T)  
+
+a %>% 
+  mutate(info = case_when(is.na(id_cae2) & !is.na(cae_1d) ~ "Sólo DT",
+                          !is.na(id_cae2) & is.na(cae_1d) ~ "Sólo SII",
+                          !is.na(id_cae2) & !is.na(cae_1d) ~ "Ambas",
+                          TRUE ~ "Ninguna")) %>% 
+  group_by(info) %>%
+  count %>% 
+  mutate(prop = round(n/nrow(a)*100, 3))
+
+a %>% 
+  group_by(rut_empresa) %>% 
+  summarise(sii = n_distinct(id_cae2),
+            dt = n_distinct(cae_1d),
+            armonizacion = n_distinct(ID)) %>% 
+  summarise(across(c(sii, dt, armonizacion),
+                   list(mean = ~mean(.),
+                        q1 = ~quantile(., 0.25),
+                        q2 = ~quantile(., 0.5),
+                        q3 = ~quantile(., 0.75),
+                        min = ~min(.),
+                        max = ~max(.)))) %>% 
+  pivot_longer(everything()) %>% 
+  mutate(stat = str_extract(name, pattern = "(?<=_).*"),
+         name = str_remove(str_extract(name, pattern = ".*(?<=_)"), "_")) %>% 
+  pivot_wider(id_cols = "name", values_from = "value", names_from = "stat")
+
+a %>% group_by(rut_empresa) %>% summarise(n=n()) %>% summarise(dup = sum(n>1),
+                                                               uniq = sum(n==1))
+
+sum(is.na(a$rut_empresa))
 
 saveRDS(ooss_micro, "input/data/dt/ooss_micro.rds")
 

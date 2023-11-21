@@ -51,6 +51,23 @@ a %>%
   group_by(info) %>%
   count %>% 
   mutate(prop = round(n/nrow(a)*100, 3))
+
+a %>% 
+  group_by(rut_empresa) %>% 
+  summarise(sii = n_distinct(id_cae2),
+           dt = n_distinct(cae_dt),
+           armonizacion = n_distinct(ID)) %>% 
+  summarise(across(c(sii, dt, armonizacion),
+                   list(mean = ~mean(.),
+                        q1 = ~quantile(., 0.25),
+                        q2 = ~quantile(., 0.5),
+                        q3 = ~quantile(., 0.75),
+                        min = ~min(.),
+                        max = ~max(.)))) %>% 
+  pivot_longer(everything()) %>% 
+  mutate(stat = str_extract(name, pattern = "(?<=_).*"),
+         name = str_remove(str_extract(name, pattern = ".*(?<=_)"), "_")) %>% 
+  pivot_wider(id_cols = "name", values_from = "value", names_from = "stat")
   
 a %>% group_by(rut_empresa) %>% summarise(n=n()) %>% summarise(dup = sum(n>1),
                                                                uniq = sum(n==1))
@@ -94,6 +111,23 @@ a %>%
   group_by(info) %>%
   count %>% 
   mutate(prop = round(n/nrow(a)*100, 3))
+
+a %>% 
+  group_by(rut_empresa) %>% 
+  summarise(sii = n_distinct(id_cae2),
+            dt = n_distinct(cae_dt),
+            armonizacion = n_distinct(ID)) %>% 
+  summarise(across(c(sii, dt, armonizacion),
+                   list(mean = ~mean(.),
+                        q1 = ~quantile(., 0.25),
+                        q2 = ~quantile(., 0.5),
+                        q3 = ~quantile(., 0.75),
+                        min = ~min(.),
+                        max = ~max(.)))) %>% 
+  pivot_longer(everything()) %>% 
+  mutate(stat = str_extract(name, pattern = "(?<=_).*"),
+         name = str_remove(str_extract(name, pattern = ".*(?<=_)"), "_")) %>% 
+  pivot_wider(id_cols = "name", values_from = "value", names_from = "stat")
 
 a %>% group_by(rut_empresa) %>% summarise(n=n()) %>% summarise(dup = sum(n>1),
                                                                uniq = sum(n==1))
@@ -140,6 +174,23 @@ hoja3 = read_xlsx("input/data/dt/1590_NC_y_Huelgas_2005_2023.xlsx",
     group_by(info) %>%
     count %>% 
     mutate(prop = round(n/nrow(a)*100, 3))
+  
+  a %>% 
+    group_by(rut_empresa) %>% 
+    summarise(sii = n_distinct(id_cae2),
+              dt = n_distinct(cae_dt),
+              armonizacion = n_distinct(ID)) %>% 
+    summarise(across(c(sii, dt, armonizacion),
+                     list(mean = ~mean(.),
+                          q1 = ~quantile(., 0.25),
+                          q2 = ~quantile(., 0.5),
+                          q3 = ~quantile(., 0.75),
+                          min = ~min(.),
+                          max = ~max(.)))) %>% 
+    pivot_longer(everything()) %>% 
+    mutate(stat = str_extract(name, pattern = "(?<=_).*"),
+           name = str_remove(str_extract(name, pattern = ".*(?<=_)"), "_")) %>% 
+    pivot_wider(id_cols = "name", values_from = "value", names_from = "stat")
   
   a %>% group_by(rut_empresa) %>% summarise(n=n()) %>% summarise(dup = sum(n>1),
                                                                  uniq = sum(n==1))
