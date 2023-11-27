@@ -16,7 +16,8 @@ names(data) = str_remove(files, pattern = ".rds$")
 llave_cae = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
   select(id_cae2, ID)
 
-sii = data[["CAE_RUT_FINAL"]]
+sii = data[["CAE_RUT_FINAL"]] %>% 
+  group_by()
 
 names(sii)
 

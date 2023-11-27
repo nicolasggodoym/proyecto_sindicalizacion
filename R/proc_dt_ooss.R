@@ -10,34 +10,39 @@ pacman::p_load(tidyverse, readxl, sjmisc)
 llave = readRDS("input/data/dt/CAE_RUT_FINAL.rds") %>%
   select(rut_empresa = rut, dv, id_cae2) %>% 
   mutate(across(c(rut_empresa, dv), ~as.character(.)),
-         id_cae2 = as.numeric(id_cae2)) %>% 
-  select(-dv)
+         id_cae2 = as.numeric(id_cae2),
+         rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% #con duplicados: 3.482.146
+  group_by(rut_empresa) %>% 
+  mutate(n = 1:n()) %>% 
+  ungroup() %>% 
+  filter(n==1) %>% #Sin duplicados: 1.617.697
+  select(-dv, -n)
 
-a = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
+llave = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
             select(id_cae2, ID),
           by = "id_cae2", all.x = T)
 
-a %>% 
-  group_by(rut_empresa, id_cae2) %>% 
-  mutate(n = n()) %>% 
-  ungroup() %>% 
-  summarise(uniq = sum(n==1),
-            uniq_p = sum(n==1)/nrow(.)*100,
-            dup = sum(n>1),
-            dup_p = sum(n>1)/nrow(.)*100)
-
-a %>% 
-  group_by(rut_empresa, ID) %>% 
-  mutate(n = n()) %>% 
-  ungroup() %>% 
-  summarise(uniq = sum(n==1),
-            uniq_p = sum(n==1)/nrow(.)*100,
-            dup = sum(n>1),
-            dup_p = sum(n>1)/nrow(.)*100)
-
-a %>% 
-  #group_by(rut_empresa) %>% 
-  summarise(serv = sum(ID %in% 39:43, na.rm=T)/nrow(.))
+# a %>% 
+#   group_by(rut_empresa, id_cae2) %>% 
+#   mutate(n = n()) %>% 
+#   ungroup() %>% 
+#   summarise(uniq = sum(n==1),
+#             uniq_p = sum(n==1)/nrow(.)*100,
+#             dup = sum(n>1),
+#             dup_p = sum(n>1)/nrow(.)*100)
+# 
+# a %>% 
+#   group_by(rut_empresa, ID) %>% 
+#   mutate(n = n()) %>% 
+#   ungroup() %>% 
+#   summarise(uniq = sum(n==1),
+#             uniq_p = sum(n==1)/nrow(.)*100,
+#             dup = sum(n>1),
+#             dup_p = sum(n>1)/nrow(.)*100)
+# 
+# a %>% 
+#   #group_by(rut_empresa) %>% 
+#   summarise(serv = sum(ID %in% 39:43, na.rm=T)/nrow(.))
 
 files = list.files(path = "input/data/dt",
                    pattern = "1594")
@@ -89,7 +94,12 @@ ooss_micro = bind_rows(ooss_micro[-8]) %>%
          n_dir_fem = n_de_dirigentas_mujeres,
          n_dir_tot = n_total_dirigentes)
 
-ooss_micro = bind_rows(ooss_micro, ooss_micro23)
+ooss_micro_b = bind_rows(ooss_micro, ooss_micro23) %>% #sin merge 168.908
+  mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
+  select(-dv) %>% 
+  merge(., llave, by = "rut_empresa", all.x = T) %>%  #Con merge 169.230
+  mutate(cae_1d = ifelse(cae_1d %in% c(0,1,999), NA, cae_1d),
+         act_econ = case_when(is.na()))
 
 #Pasa de 168.908 a 470.622
 
@@ -100,14 +110,14 @@ a = merge(micro, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>%
             select(id_cae2, ID),
           by = "id_cae2", all.x = T)  
 
-a %>% 
+ooss_micro_b %>% 
   mutate(info = case_when(is.na(id_cae2) & !is.na(cae_1d) ~ "Sólo DT",
                           !is.na(id_cae2) & is.na(cae_1d) ~ "Sólo SII",
                           !is.na(id_cae2) & !is.na(cae_1d) ~ "Ambas",
                           TRUE ~ "Ninguna")) %>% 
   group_by(info) %>%
   count %>% 
-  mutate(prop = round(n/nrow(a)*100, 3))
+  mutate(prop = round(n/nrow(ooss_micro_b)*100, 3))
 
 a %>% 
   group_by(rut_empresa) %>% 
