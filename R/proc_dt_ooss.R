@@ -77,7 +77,8 @@ ooss_micro23 = ooss_micro[[8]] %>%
          n_dir_tot = n_total_dirigentes,
          rsu_fed = rsu_federacion_rsu_fed,
          rsu_cen = rsu_central_sindical_rsu_cent,
-         rsu_conf = rsu_confederacion_rsu_confed) 
+         rsu_conf = rsu_confederacion_rsu_confed
+         ) 
 
 ooss_micro = bind_rows(ooss_micro[-8]) %>% 
   select(rut_empresa, dv, ano,
@@ -94,52 +95,46 @@ ooss_micro = bind_rows(ooss_micro[-8]) %>%
          n_dir_fem = n_de_dirigentas_mujeres,
          n_dir_tot = n_total_dirigentes)
 
-ooss_micro_b = bind_rows(ooss_micro, ooss_micro23) %>% #sin merge 168.908
+ooss_micro = ooss_micro %>% #sin merge 168.908
   mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
   select(-dv) %>% 
-  merge(., llave, by = "rut_empresa", all.x = T) %>%  #Con merge 169.230
-  mutate(cae_1d = ifelse(cae_1d %in% c(0,1,999), NA, cae_1d),
-         act_econ = case_when(is.na()))
+  merge(., llave, by = "rut_empresa", all.x = T)  #Con merge 169.230
+  
 
 #Pasa de 168.908 a 470.622
 
-micro = merge(ooss_micro, 
-              llave, by = "rut_empresa", all.x = T)
 
-a = merge(micro, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
-            select(id_cae2, ID),
-          by = "id_cae2", all.x = T)  
 
-ooss_micro_b %>% 
-  mutate(info = case_when(is.na(id_cae2) & !is.na(cae_1d) ~ "Sólo DT",
-                          !is.na(id_cae2) & is.na(cae_1d) ~ "Sólo SII",
-                          !is.na(id_cae2) & !is.na(cae_1d) ~ "Ambas",
-                          TRUE ~ "Ninguna")) %>% 
-  group_by(info) %>%
-  count %>% 
-  mutate(prop = round(n/nrow(ooss_micro_b)*100, 3))
+# ooss_micro_b %>% 
+#   mutate(info = case_when(is.na(id_cae2) & !is.na(cae_1d) ~ "Sólo DT",
+#                           !is.na(id_cae2) & is.na(cae_1d) ~ "Sólo SII",
+#                           !is.na(id_cae2) & !is.na(cae_1d) ~ "Ambas",
+#                           TRUE ~ "Ninguna")) %>% 
+#   group_by(info) %>%
+#   count %>% 
+#   mutate(prop = round(n/nrow(ooss_micro_b)*100, 3))
+# 
+# ooss_micro_b %>% 
+#   group_by(rut_empresa) %>% 
+#   summarise(sii = n_distinct(id_cae2),
+#             dt = n_distinct(cae_1d),
+#             armonizacion = n_distinct(ID)) %>% 
+#   summarise(across(c(sii, dt, armonizacion),
+#                    list(mean = ~mean(.),
+#                         q1 = ~quantile(., 0.25),
+#                         q2 = ~quantile(., 0.5),
+#                         q3 = ~quantile(., 0.75),
+#                         min = ~min(.),
+#                         max = ~max(.)))) %>% 
+#   pivot_longer(everything()) %>% 
+#   mutate(stat = str_extract(name, pattern = "(?<=_).*"),
+#          name = str_remove(str_extract(name, pattern = ".*(?<=_)"), "_")) %>% 
+#   pivot_wider(id_cols = "name", values_from = "value", names_from = "stat")
 
-a %>% 
-  group_by(rut_empresa) %>% 
-  summarise(sii = n_distinct(id_cae2),
-            dt = n_distinct(cae_1d),
-            armonizacion = n_distinct(ID)) %>% 
-  summarise(across(c(sii, dt, armonizacion),
-                   list(mean = ~mean(.),
-                        q1 = ~quantile(., 0.25),
-                        q2 = ~quantile(., 0.5),
-                        q3 = ~quantile(., 0.75),
-                        min = ~min(.),
-                        max = ~max(.)))) %>% 
-  pivot_longer(everything()) %>% 
-  mutate(stat = str_extract(name, pattern = "(?<=_).*"),
-         name = str_remove(str_extract(name, pattern = ".*(?<=_)"), "_")) %>% 
-  pivot_wider(id_cols = "name", values_from = "value", names_from = "stat")
+# a %>% group_by(rut_empresa) %>% summarise(n=n()) %>% summarise(dup = sum(n>1),
+#                                                                uniq = sum(n==1))
 
-a %>% group_by(rut_empresa) %>% summarise(n=n()) %>% summarise(dup = sum(n>1),
-                                                               uniq = sum(n==1))
-
-sum(is.na(a$rut_empresa))
+#sum(is.na(a$rut_empresa))
 
 saveRDS(ooss_micro, "input/data/dt/ooss_micro.rds")
 
@@ -209,3 +204,24 @@ ooss_cen = bind_rows(ooss_cen) %>%
          tipo_org_cen = sigla)
 
 saveRDS(ooss_cen, "input/data/dt/ooss_cen.rds")
+
+
+# Unificar ----------------------------------------------------------------
+
+ooss = ooss_micro %>% 
+  merge(., 
+        ooss_fed, by = c("rsu", "ano"),
+        all.x = T) %>% 
+  merge(., 
+        ooss_conf, by = c("rsu", "ano"),
+        all.x = T) %>% 
+  merge(., 
+        ooss_cen, by = c("rsu", "ano"),
+        all.x = T) %>% 
+  bind_rows(., ooss_micro23 %>% 
+              mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
+              select(-dv))
+
+saveRDS(ooss, "input/data/dt/ooss.rds")
+#169230
+
