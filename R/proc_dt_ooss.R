@@ -78,7 +78,10 @@ ooss_micro23 = ooss_micro[[8]] %>%
          rsu_fed = rsu_federacion_rsu_fed,
          rsu_cen = rsu_central_sindical_rsu_cent,
          rsu_conf = rsu_confederacion_rsu_confed
-         ) 
+         ) %>% 
+  mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
+  dplyr::select(-dv) %>% 
+  merge(., llave, by = "rut_empresa", all.x = T)
 
 ooss_micro = bind_rows(ooss_micro[-8]) %>% 
   select(rut_empresa, dv, ano,
@@ -218,9 +221,9 @@ ooss = ooss_micro %>%
   merge(., 
         ooss_cen, by = c("rsu", "ano"),
         all.x = T) %>% 
-  bind_rows(., ooss_micro23 %>% 
-              mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
-              select(-dv))
+  bind_rows(., ooss_micro23) %>% 
+  mutate(across(starts_with("rsu_"), ~ifelse(. == "-", NA, .)),
+         rut_empresa = ifelse(rut_empresa %in% c("0", "0-NA"), NA, rut_empresa)) 
 
 saveRDS(ooss, "input/data/dt/ooss.rds")
 #169230
