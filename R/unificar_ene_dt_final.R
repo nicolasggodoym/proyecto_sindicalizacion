@@ -5,7 +5,7 @@ rm(list=ls())
 
 
 # Cargar paquetes ---------------------------------------------------------
-pacman::p_load(tidyverse, sjmisc)
+pacman::p_load(tidyverse, sjmisc, writexl)
 
 # Cargar data -------------------------------------------------------------
 dt = readRDS("output/data/data_dt_proc_final.rds")
@@ -15,9 +15,15 @@ ene = readRDS("output/data/ene_final_ID.rds") %>%
          ano = as.numeric(ano)) %>% 
   filter(!is.na(ID))
 
+olas = data.frame(ID = rep(c(1:43), 14),
+                  ano = map(2010:2023, ~rep(.x, 43)) %>% unlist())
+
 # Unificar ----------------------------------------------------------------
 data = list(ene, dt) %>% 
   reduce(full_join, by = c("ID", "ano")) %>% 
+  merge(olas,
+        ., 
+        by = c("ano", "ID"), all = T) %>% 
   arrange(ano, ID) %>% 
   filter(ano %in% 2010:2023) %>% 
   mutate(across(total:por_cen,
@@ -36,3 +42,72 @@ data = list(ene, dt) %>%
 
 # Exportar ----------------------------------------------------------------
 saveRDS(data,"output/data/data_dt_ene_final.rds")
+
+
+
+# Explorar bugs -----------------------------------------------------------
+
+#% mayores a 100
+
+data %>% 
+  summarise(across(c(tasa_afiliacion, por_cobertura, por_cobertura_cont),
+                   ~sum(. > 100)))
+
+data %>% 
+  filter(if_any(c(tasa_afiliacion, por_cobertura, por_cobertura_cont),
+                ~.>100)) %>% 
+  select(ID, ano, 
+         total, n_afil_tot, tasa_afiliacion,
+         cubiertos_tot, por_cobertura,
+         cubiertos_cont, por_cobertura_cont,
+         n_sind) %>% 
+  write_xlsx("rev_porcentajes.xlsx")
+
+ids=data %>% 
+  filter(if_any(c(tasa_afiliacion, por_cobertura, por_cobertura_cont),
+                ~.>100)) %>% 
+  select(ID) %>% unique() %>% pull()
+
+j=data %>% 
+  filter(ID %in% ids) %>% 
+  select(ID, ano, 
+         total, n_afil_tot, tasa_afiliacion,
+         cubiertos_tot, por_cobertura,
+         cubiertos_cont, por_cobertura_cont,
+         n_sind)
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
