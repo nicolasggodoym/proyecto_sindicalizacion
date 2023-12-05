@@ -13,7 +13,7 @@ dt = readRDS("output/data/data_dt_proc_final.rds")
 ene = readRDS("output/data/ene_final_ID.rds") %>% 
   mutate(ID2 = factor(ID2),
          ano = as.numeric(ano)) %>% 
-  filter(!is.na(ID2))
+  filter(!is.na(ID2) & ID2 != "Total")
 
 olas = data.frame(ID2 = factor(rep(c(1:34), 14)),
                   ano = map(2010:2023, ~rep(.x, 34)) %>% unlist())

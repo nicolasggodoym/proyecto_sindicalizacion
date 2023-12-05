@@ -34,8 +34,8 @@ ooss = readRDS("input/data/dt/ooss.rds") #%>% merge(., llave,
 # Número de trabajadores --------------------------------------------------
 
 h_nt = huelgas_ntrab_dt %>% 
-  group_by(rut_empresa, rsu, cae_dt, ano, fecha, trab_mas_h, trab_fem_h, 
-           trab_tot_h, tipo_org_h, codigoactividad, ID2) %>% 
+  group_by(rut_empresa, rsu, codigoactividad, ano, fecha, trab_mas_h, trab_fem_h, 
+           trab_tot_h, tipo_org_h, codigoactividad_sii, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
@@ -50,8 +50,8 @@ h_nt = huelgas_ntrab_dt %>%
   filter(!is.na(ID2))
 
 h_dur = huelgas_dur_dt %>% 
-  group_by(rut_empresa, rsu, cae_dt, ano, fecha, dias_h, resultado_neg_h, trab_mas_h,
-           trab_fem_h, trab_tot_h, codigoactividad, ID2) %>% 
+  group_by(rut_empresa, rsu, codigoactividad, ano, fecha, dias_h, resultado_neg_h, trab_mas_h,
+           trab_fem_h, trab_tot_h, codigoactividad_sii, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
@@ -62,36 +62,39 @@ h_dur = huelgas_dur_dt %>%
   filter(!is.na(ID2))
   
 nc = neg_col_dt %>% 
-  group_by(rut_empresa, rsu, cae_dt, ano, trab_empresa_nc, tipo_inst, tipo_neg,
-           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad, ID2) %>% 
+  group_by(rut_empresa, rsu, codigoactividad, ano, trab_empresa_nc, tipo_inst, tipo_neg,
+           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad_sii, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
   group_by(ID2, ano) %>% 
+  filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
   summarise(cubiertos_tot = sum(trab_tot_nc, na.rm = T),
             cubiertos_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_mas = sum(trab_mas_nc, na.rm = T)) %>% 
   filter(!is.na(ID2))
 
 nc_contrato = neg_col_dt %>% 
-  group_by(rut_empresa, rsu, cae_dt, ano, trab_empresa_nc, tipo_inst, tipo_neg,
-           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad, ID2) %>% 
+  group_by(rut_empresa, rsu, codigoactividad, ano, trab_empresa_nc, tipo_inst, tipo_neg,
+           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad_sii, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1 & tipo_inst == "Contrato Colectivo") %>% 
   ungroup() %>% 
   group_by(ID2, ano) %>% 
+  filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
   summarise(cubiertos_cont = sum(trab_tot_nc, na.rm = T),
             cubiertos_cont_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_cont_mas = sum(trab_mas_nc, na.rm = T)) %>% 
   filter(!is.na(ID2))
 
 nc_otro = neg_col_dt %>% 
-  group_by(rut_empresa, rsu, cae_dt, ano, trab_empresa_nc, tipo_inst, tipo_neg,
-           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad, ID2) %>% 
+  group_by(rut_empresa, rsu, codigoactividad, ano, trab_empresa_nc, tipo_inst, tipo_neg,
+           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad_sii, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1 & tipo_inst != "Contrato Colectivo") %>% 
   ungroup() %>% 
   group_by(ID2, ano) %>% 
+  filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
   summarise(cubiertos_otro = sum(trab_tot_nc, na.rm = T),
             cubiertos_otro_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_otro_mas = sum(trab_mas_nc, na.rm = T)) %>% 
