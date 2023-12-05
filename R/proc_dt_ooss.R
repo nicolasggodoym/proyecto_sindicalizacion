@@ -8,22 +8,25 @@ pacman::p_load(tidyverse, readxl, sjmisc)
 # Cargar datos ------------------------------------------------------------
 
 llave = readRDS("input/data/dt/CAE_RUT_FINAL.rds") %>%
-  select(rut_empresa = rut, dv, id_cae2) %>% 
+  select(rut_empresa = rut, dv, codigoactividad) %>% 
   mutate(across(c(rut_empresa, dv), ~as.character(.)),
-         id_cae2 = as.numeric(id_cae2),
+         codigoactividad = ifelse(nchar(codigoactividad) == 5, 
+                                 str_extract(codigoactividad, "\\d{1}"), 
+                                 str_extract(codigoactividad, "\\d{2}")),
          rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% #con duplicados: 3.482.146
   group_by(rut_empresa) %>% 
   mutate(n = 1:n()) %>% 
+  #ungroup() %>% 
+  slice(which.min(n)) %>% #Sin duplicados: 1.617.697
   ungroup() %>% 
-  filter(n==1) %>% #Sin duplicados: 1.617.697
   select(-dv, -n)
 
 llave = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
-            select(id_cae2, ID),
-          by = "id_cae2", all.x = T)
+            select(codigoactividad, ID2),
+          by = "codigoactividad", all.x = T)
 
 # a %>% 
-#   group_by(rut_empresa, id_cae2) %>% 
+#   group_by(rut_empresa, codigoactividad) %>% 
 #   mutate(n = n()) %>% 
 #   ungroup() %>% 
 #   summarise(uniq = sum(n==1),
@@ -51,7 +54,8 @@ files = list.files(path = "input/data/dt",
 
 ooss_micro = map(files, 
            ~ read_xlsx(paste0("input/data/dt/", .x), 
-                       na = c("SIN INFORMACIÓN", "NULL")) %>% 
+                       na = c("SIN INFORMACIÓN", "NULL"),
+                       guess_max = 23000) %>% 
              janitor::clean_names()) 
 
 names(ooss_micro) = str_extract(files, pattern = "(OOSS_|COES_)\\d{4}")
@@ -60,6 +64,26 @@ ooss_micro = imap(ooss_micro,
                  ~ .x %>% 
                    mutate(anno = str_extract(.y, pattern = "\\d{4}$")))
 
+ooss_micro$OOSS_2019 = ooss_micro$OOSS_2019 %>% #bind_rows() %>% 
+  mutate(tipo_de_organizacion_sindical_de_base2 = ifelse(tipo_de_organizacion_sindical_de_base == "ASOCIACION DE FUNCIONARIOS",
+                                                         "ASOCIACION DE FUNCIONARIOS", socios_hombres),
+         socios_hombres2 = as.numeric(ifelse(tipo_de_organizacion_sindical_de_base == "ASOCIACION DE FUNCIONARIOS", 
+                                             socios_hombres, tipo_de_organizacion_sindical_de_base))) %>% 
+  select(ano:region_de_la_ooss_de_base, 
+         tipo_de_organizacion_sindical_de_base = tipo_de_organizacion_sindical_de_base2,
+         socios_hombres = socios_hombres2,
+         socias_mujeres:anno)
+
+ooss_micro$OOSS_2020 = ooss_micro$OOSS_2020 %>% #bind_rows() %>% 
+  mutate(codigo_rae_sirela = as.numeric(codigo_rae_sirela))
+
+# a=ooss_micro["OOSS_2019"] %>% bind_rows() %>% 
+#   mutate(tipo_de_organizacion_sindical_de_base2 = ifelse(tipo_de_organizacion_sindical_de_base == "ASOCIACION DE FUNCIONARIOS", "ASOCIACION DE FUNCIONARIOS", socios_hombres),
+#          socios_hombres2 = ifelse(tipo_de_organizacion_sindical_de_base == "ASOCIACION DE FUNCIONARIOS", socios_hombres, tipo_de_organizacion_sindical_de_base)) %>% 
+#   select(ano:region_de_la_ooss_de_base, 
+#          tipo_de_organizacion_sindical_de_base = tipo_de_organizacion_sindical_de_base2,
+#          socios_hombres = socios_hombres2,
+#          socias_mujeres:anno)
 
 ooss_micro23 = ooss_micro[[8]] %>% 
   select(rut_empresa, dv, ano,
@@ -109,9 +133,9 @@ ooss_micro = ooss_micro %>% #sin merge 168.908
 
 
 # ooss_micro_b %>% 
-#   mutate(info = case_when(is.na(id_cae2) & !is.na(cae_1d) ~ "Sólo DT",
-#                           !is.na(id_cae2) & is.na(cae_1d) ~ "Sólo SII",
-#                           !is.na(id_cae2) & !is.na(cae_1d) ~ "Ambas",
+#   mutate(info = case_when(is.na(codigoactividad) & !is.na(cae_1d) ~ "Sólo DT",
+#                           !is.na(codigoactividad) & is.na(cae_1d) ~ "Sólo SII",
+#                           !is.na(codigoactividad) & !is.na(cae_1d) ~ "Ambas",
 #                           TRUE ~ "Ninguna")) %>% 
 #   group_by(info) %>%
 #   count %>% 
@@ -119,7 +143,7 @@ ooss_micro = ooss_micro %>% #sin merge 168.908
 # 
 # ooss_micro_b %>% 
 #   group_by(rut_empresa) %>% 
-#   summarise(sii = n_distinct(id_cae2),
+#   summarise(sii = n_distinct(codigoactividad),
 #             dt = n_distinct(cae_1d),
 #             armonizacion = n_distinct(ID)) %>% 
 #   summarise(across(c(sii, dt, armonizacion),
@@ -223,7 +247,8 @@ ooss = ooss_micro %>%
         all.x = T) %>% 
   bind_rows(., ooss_micro23) %>% 
   mutate(across(starts_with("rsu_"), ~ifelse(. == "-", NA, .)),
-         rut_empresa = ifelse(rut_empresa %in% c("0", "0-NA"), NA, rut_empresa)) 
+         rut_empresa = ifelse(rut_empresa %in% c("0", "0-NA"), NA, rut_empresa),
+         ) 
 
 saveRDS(ooss, "input/data/dt/ooss.rds")
 #169230

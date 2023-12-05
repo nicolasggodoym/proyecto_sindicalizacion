@@ -1,0 +1,1143 @@
+---
+title: "Descriptivos"
+date: today
+date-format: DD MMMM, YYYY
+lang: es
+format:
+  html:
+    embed-resources: true
+editor: visual
+self-contained: true
+html-math-method: 
+  method: mathjax
+  url: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+toc: true
+execute:
+  freeze: auto
+---
+
+```{r, include= FALSE}
+#pacman::p_load(tidyverse,readxl, patchwork)
+knitr::opts_chunk$set(echo= FALSE, warning=FALSE, error = T, message =F)
+options(scipen = 999)
+```
+
+# Dependientes
+
+## Número de huelgas
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_huelgasT.rds")
+```
+:::
+
+## Número de trabajadores involucrados en huelgas
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_trab_huelga_totT.rds")
+```
+:::
+
+## Duración media de huelgas
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/huelgas_durT.rds")
+```
+:::
+
+# Independientes
+
+## Tasa de afiliación sindical
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/tasa_afiliacionT.rds")
+```
+:::
+
+## Fragmentación sindical (número de sindicatos por cada mil trabajadores)
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_sind_milT.rds")
+```
+:::
+
+## Porcentaje de cobertura de la negociación colectiva
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_coberturaT.rds")
+```
+:::
+
+## Porcentaje de cobertura de la negociación colectiva (contratos)
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/por_cobertura_contT.rds")
+```
+:::
+
+## Días-persona trabajador perdidos (total)
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/n_dptpT.rds")
+```
+:::
+
+## Días-persona trabajador perdidos (media)
+
+::: panel-tabset
+## A: Agricultura, ganadería y pesca
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpA.rds")
+```
+
+## B: Minería
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpB.rds")
+```
+
+## C: Industrias manufactureras
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpC.rds")
+```
+
+## D: Suministro de electricidad y gas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpD.rds")
+```
+
+## E: Suministro de agua y tratamiento de residuos
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpE.rds")
+```
+
+## F: Construcción
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpF.rds")
+```
+
+## G: Comercio
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpG.rds")
+```
+
+## H: Transporte y almacenamiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpH.rds")
+```
+
+## I: Alojamiento y servicio de comidas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpI.rds")
+```
+
+## J: Información y comunicaciones
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpJ.rds")
+```
+
+## K: Servicios financieros
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpK.rds")
+```
+
+## L: Actividades inmobiliarias
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpL.rds")
+```
+
+## M: Actividades profesionales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpM.rds")
+```
+
+## N: Actividades de apoyo y administrativas
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpN.rds")
+```
+
+## O: Administración pública
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpO.rds")
+```
+
+## P: Enseñanza
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpP.rds")
+```
+
+## Q: Salud y servicios sociales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpQ.rds")
+```
+
+## R: Actividades recreativas y de entretenimiento
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpR.rds")
+```
+
+## S: Otros servicios
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpS.rds")
+```
+
+## T: Organismos extraterritoriales
+
+```{r, echo= FALSE, warning=FALSE}
+readRDS("output/img/descriptivos_DT_ENE/mean_dptpT.rds")
+```
+:::

@@ -22,7 +22,7 @@ data.list = setNames(data.list, files %>% str_remove("ene-"))
 #                            str_remove("-\\d{2}.dta"))
 
 llave = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
-  select(CAENES_ENE, ID) %>% 
+  select(CAENES_ENE, ID, ID2) %>% 
   mutate(CAENES_ENE = as.numeric(CAENES_ENE)) %>% 
   unique
 
@@ -154,14 +154,17 @@ data.list = data.list %>%
                   edad) %>% 
            mutate(across(ends_with("_2d"), ~ifelse(. == "", NA, as.numeric(.)))) %>% 
            merge(., 
-                 llave %>% rename(b13_ciiu3_2d = CAENES_ENE, ID13 = ID),
+                 llave %>% rename(b13_ciiu3_2d = CAENES_ENE, ID13 = ID, ID132 = ID2),
                  by = "b13_ciiu3_2d", all.x = T) %>% 
            merge(., 
-                 llave %>% rename(b14_ciiu3_2d = CAENES_ENE, ID14 = ID),
+                 llave %>% rename(b14_ciiu3_2d = CAENES_ENE, ID14 = ID, ID142 = ID2),
                  by = "b14_ciiu3_2d", all.x = T) %>% 
            mutate(ID = case_when(str_detect(b12,"directamente con la empresa en donde trabaja") | str_detect(b2, "para su propio negocio, empresa o actividad por cuenta propia") | is.na(ID13) ~ ID14, 
                                  !str_detect(b12,"directamente con la empresa en donde trabaja") | is.na(ID14)  ~ ID13,
                                  TRUE ~ NA_real_),
+                  ID2 = case_when(str_detect(b12,"directamente con la empresa en donde trabaja") | str_detect(b2, "para su propio negocio, empresa o actividad por cuenta propia") | is.na(ID132)  ~ ID142, 
+                                  !str_detect(b12,"directamente con la empresa en donde trabaja") | is.na(ID142)  ~ ID132,
+                                  TRUE ~ NA_real_),
                   ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
                                      (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
@@ -233,14 +236,17 @@ data.list = data.list %>%
                   edad) %>% 
            mutate(across(ends_with("_2d"), ~ifelse(. == "", NA, as.numeric(.)))) %>% 
            merge(., 
-                 llave %>% rename(b13_caenes_2d = CAENES_ENE, ID13 = ID),
+                 llave %>% rename(b13_caenes_2d = CAENES_ENE, ID13 = ID, ID132 = ID2),
                  by = "b13_caenes_2d", all.x = T) %>% 
            merge(., 
-                 llave %>% rename(b14_caenes_2d = CAENES_ENE, ID14 = ID),
+                 llave %>% rename(b14_caenes_2d = CAENES_ENE, ID14 = ID, ID142 = ID2),
                  by = "b14_caenes_2d", all.x = T) %>% 
            mutate(ID = case_when(str_detect(b12,"directamente con la empresa en donde trabaja") | str_detect(b2, "para su propio negocio, empresa o actividad por cuenta propia") | is.na(ID13)  ~ ID14, 
                                  !str_detect(b12,"directamente con la empresa en donde trabaja") | is.na(ID14)  ~ ID13,
                                  TRUE ~ NA_real_),
+                  ID2 = case_when(str_detect(b12,"directamente con la empresa en donde trabaja") | str_detect(b2, "para su propio negocio, empresa o actividad por cuenta propia") | is.na(ID132)  ~ ID142, 
+                                  !str_detect(b12,"directamente con la empresa en donde trabaja") | is.na(ID142)  ~ ID132,
+                                  TRUE ~ NA_real_),
                   ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca"))|
                                      (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Agricultura, ganadería, caza y silvicultura", "Pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
@@ -312,13 +318,16 @@ data.list = data.list %>%
                   edad) %>% 
            mutate(across(ends_with("_2d"), ~ifelse(. == "", NA, as.numeric(.)))) %>% 
            merge(., 
-                 llave %>% rename(b13_caenes_2d = CAENES_ENE, ID13 = ID),
+                 llave %>% rename(b13_caenes_2d = CAENES_ENE, ID13 = ID, ID132 = ID2),
                  by = "b13_caenes_2d", all.x = T) %>% 
            merge(., 
-                 llave %>% rename(b14_caenes_2d = CAENES_ENE, ID14 = ID),
+                 llave %>% rename(b14_caenes_2d = CAENES_ENE, ID14 = ID, ID142 = ID2),
                  by = "b14_caenes_2d", all.x = T) %>% 
             mutate(ID = case_when(str_detect(b12,"directamente con la empresa en donde trabaja") | str_detect(b2, "para su propio negocio, empresa o actividad por cuenta propia") | is.na(ID13)  ~ ID14, 
                                   !str_detect(b12,"directamente con la empresa en donde trabaja") | is.na(ID14)  ~ ID13,
+                                  TRUE ~ NA_real_),
+                   ID2 = case_when(str_detect(b12,"directamente con la empresa en donde trabaja") | str_detect(b2, "para su propio negocio, empresa o actividad por cuenta propia") | is.na(ID132)  ~ ID142, 
+                                  !str_detect(b12,"directamente con la empresa en donde trabaja") | is.na(ID142)  ~ ID132,
                                   TRUE ~ NA_real_),
                    ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
                                      (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, silvicultura y pesca"))|

@@ -6,20 +6,27 @@ rm(list=ls())
 pacman::p_load(tidyverse, sjmisc, readxl, data.table)
 
 # Cargar data -------------------------------------------------------------
+# llave = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
+#   select(ID, ID2) %>% 
+#   unique
 
 # NC y Huelgas ------------------------------------------------------------
 files = list.files("input/data/dt", pattern = ".rds")[2:4]
 
-nc_h = map(files, ~readRDS(paste0("input/data/dt/", .x)))
+nc_h = map(files, ~readRDS(paste0("input/data/dt/", .x)) #%>% merge(., llave, by = "ID", all.x = T)
+           )
 
 names(nc_h) = str_remove(files, pattern = ".rds$")
 
 list2env(nc_h, globalenv())
 rm(nc_h)
 
+
+
 # OOSS --------------------------------------------------------------------
 
-ooss = readRDS("input/data/dt/ooss.rds")
+ooss = readRDS("input/data/dt/ooss.rds") #%>% merge(., llave,
+        #by = "ID", all.x = T)
 
 # Estimaciones ------------------------------------------------------------
 
@@ -27,11 +34,12 @@ ooss = readRDS("input/data/dt/ooss.rds")
 # Número de trabajadores --------------------------------------------------
 
 h_nt = huelgas_ntrab_dt %>% 
-  group_by(rut_empresa, rsu, fecha) %>% 
+  group_by(rut_empresa, rsu, cae_dt, ano, fecha, trab_mas_h, trab_fem_h, 
+           trab_tot_h, tipo_org_h, codigoactividad, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
-  group_by(ID, ano) %>% 
+  group_by(ID2, ano) %>% 
   summarise(n_huelgas = n(),
             n_trab_huelga_tot = sum(trab_tot_h, na.rm = T),
             n_trab_huelga_fem = sum(trab_fem_h, na.rm = T),
@@ -39,58 +47,64 @@ h_nt = huelgas_ntrab_dt %>%
             mean_trab_huelga_tot = mean(trab_tot_h, na.rm = T),
             mean_trab_huelga_fem = mean(trab_fem_h, na.rm = T),
             mean_trab_huelga_mas = mean(trab_mas_h, na.rm = T)) %>% 
-  filter(!is.na(ID))
+  filter(!is.na(ID2))
 
 h_dur = huelgas_dur_dt %>% 
-  group_by(rut_empresa, rsu, fecha) %>% 
+  group_by(rut_empresa, rsu, cae_dt, ano, fecha, dias_h, resultado_neg_h, trab_mas_h,
+           trab_fem_h, trab_tot_h, codigoactividad, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
-  group_by(ID, ano) %>% 
+  group_by(ID2, ano) %>% 
   summarise(huelgas_dur = mean(dias_h, na.rm = T),
             n_dptp = sum(trab_tot_h*dias_h),
             mean_dptp = mean(trab_tot_h*dias_h)) %>% 
-  filter(!is.na(ID))
+  filter(!is.na(ID2))
   
 nc = neg_col_dt %>% 
-  group_by(rut_empresa, rsu, ano) %>% 
+  group_by(rut_empresa, rsu, cae_dt, ano, trab_empresa_nc, tipo_inst, tipo_neg,
+           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
-  group_by(ID, ano) %>% 
+  group_by(ID2, ano) %>% 
   summarise(cubiertos_tot = sum(trab_tot_nc, na.rm = T),
             cubiertos_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_mas = sum(trab_mas_nc, na.rm = T)) %>% 
-  filter(!is.na(ID))
+  filter(!is.na(ID2))
 
 nc_contrato = neg_col_dt %>% 
-  group_by(rut_empresa, rsu, ano) %>% 
+  group_by(rut_empresa, rsu, cae_dt, ano, trab_empresa_nc, tipo_inst, tipo_neg,
+           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1 & tipo_inst == "Contrato Colectivo") %>% 
   ungroup() %>% 
-  group_by(ID, ano) %>% 
+  group_by(ID2, ano) %>% 
   summarise(cubiertos_cont = sum(trab_tot_nc, na.rm = T),
             cubiertos_cont_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_cont_mas = sum(trab_mas_nc, na.rm = T)) %>% 
-  filter(!is.na(ID))
+  filter(!is.na(ID2))
 
 nc_otro = neg_col_dt %>% 
-  group_by(rut_empresa, rsu, ano) %>% 
+  group_by(rut_empresa, rsu, cae_dt, ano, trab_empresa_nc, tipo_inst, tipo_neg,
+           trab_mas_nc, trab_fem_nc, trab_tot_nc, codigoactividad, ID2) %>% 
   mutate(n = 1:n()) %>% 
   filter(n==1 & tipo_inst != "Contrato Colectivo") %>% 
   ungroup() %>% 
-  group_by(ID, ano) %>% 
+  group_by(ID2, ano) %>% 
   summarise(cubiertos_otro = sum(trab_tot_nc, na.rm = T),
             cubiertos_otro_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_otro_mas = sum(trab_mas_nc, na.rm = T)) %>% 
-  filter(!is.na(ID))
+  filter(!is.na(ID2))
 
 sind = ooss %>% 
-  group_by(rut_empresa, rsu, ano) %>% 
+  select(-c(cae_1d)) %>% 
+  group_by(rsu, ano, rut_empresa) %>% 
   mutate(n = 1:n()) %>% 
-  filter(n==1) %>% 
+  filter(n==1 & !tipo_org %in% c("Asociacion de funcionarios", "ASOCIACION DE FUNCIONARIOS")) %>% 
   ungroup() %>% 
-  group_by(ID, ano) %>% 
+  group_by(ID2, ano) %>% 
+  filter(afil_tot < quantile(afil_tot, .975, na.rm=T)) %>% 
   summarise(n_sind = n(),
             n_afil_tot = sum(afil_tot, na.rm = T),
             n_afil_mas = sum(afil_mas, na.rm = T),
@@ -102,10 +116,12 @@ sind = ooss %>%
             por_fed = round(sum(!is.na(rsu_fed))/n()*100, 3),
             por_conf = round(sum(!is.na(rsu_conf))/n()*100, 3),
             por_cen = round(sum(!is.na(rsu_cen))/n()*100, 3)) %>% 
-  filter(!is.na(ID))
+  ungroup() %>% 
+  mutate(ID2 = factor(ID2)) %>% 
+  filter(!is.na(ID2))
 
 
 data = list(nc, nc_contrato, nc_otro, h_nt, h_dur, sind) %>% 
-  reduce(full_join, by = c("ID", "ano"))
+  reduce(full_join, by = c("ID2", "ano"))
 
 saveRDS(data, "output/data/data_dt_proc_final.rds")
