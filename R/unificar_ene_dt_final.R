@@ -69,7 +69,7 @@ ids=data %>%
   select(ID2) %>% unique() %>% pull()
 
 j=data %>% 
-  #filter(ID2 %in% ids) %>% 
+  filter(ID2 %in% ids) %>% 
   select(ID2, ano, 
          total, n_afil_tot, tasa_afiliacion,
          cubiertos_tot, por_cobertura,

@@ -68,7 +68,7 @@ nc = neg_col_dt %>%
   filter(n==1) %>% 
   ungroup() %>% 
   group_by(ID2, ano) %>% 
-  filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
+  filter(trab_tot_nc < quantile(trab_tot_nc, .99, na.rm=T)) %>% 
   summarise(cubiertos_tot = sum(trab_tot_nc, na.rm = T),
             cubiertos_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_mas = sum(trab_mas_nc, na.rm = T)) %>% 
@@ -81,7 +81,7 @@ nc_contrato = neg_col_dt %>%
   filter(n==1 & tipo_inst == "Contrato Colectivo") %>% 
   ungroup() %>% 
   group_by(ID2, ano) %>% 
-  filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
+  filter(trab_tot_nc < quantile(trab_tot_nc, .99, na.rm=T)) %>% 
   summarise(cubiertos_cont = sum(trab_tot_nc, na.rm = T),
             cubiertos_cont_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_cont_mas = sum(trab_mas_nc, na.rm = T)) %>% 
