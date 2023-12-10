@@ -93,7 +93,7 @@ hoja1 = read_xlsx("input/data/dt/1590_NC_y_Huelgas_2005_2023.xlsx",
                               TRUE ~ NA_integer_)),
          across(c(tipo_inst, tipo_neg), ~ str_to_title(.))) #%>% 
   # merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
-  #         select(codigoactividad, ID),
+  #         select(codigoactividad, ID2),
   #       by = "codigoactividad", all.x = T)
 
 
@@ -110,7 +110,7 @@ hoja1 = read_xlsx("input/data/dt/1590_NC_y_Huelgas_2005_2023.xlsx",
 #   group_by(rut_empresa) %>% 
 #   summarise(sii = n_distinct(codigoactividad),
 #            dt = n_distinct(codigoactividad),
-#            armonizacion = n_distinct(ID)) %>% 
+#            armonizacion = n_distinct(ID2)) %>% 
 #   summarise(across(c(sii, dt, armonizacion),
 #                    list(mean = ~mean(.),
 #                         q1 = ~quantile(., 0.25),
@@ -205,7 +205,7 @@ hoja2 = read_xlsx("input/data/dt/1590_NC_y_Huelgas_2005_2023.xlsx",
 #   group_by(rut_empresa) %>% 
 #   summarise(sii = n_distinct(codigoactividad),
 #             dt = n_distinct(codigoactividad),
-#             armonizacion = n_distinct(ID)) %>% 
+#             armonizacion = n_distinct(ID2)) %>% 
 #   summarise(across(c(sii, dt, armonizacion),
 #                    list(mean = ~mean(.),
 #                         q1 = ~quantile(., 0.25),
@@ -302,7 +302,7 @@ hoja3 = read_xlsx("input/data/dt/1590_NC_y_Huelgas_2005_2023.xlsx",
 #   group_by(rut_empresa) %>% 
 #   summarise(sii = n_distinct(codigoactividad),
 #             dt = n_distinct(codigoactividad),
-#             armonizacion = n_distinct(ID)) %>% 
+#             armonizacion = n_distinct(ID2)) %>% 
 #   summarise(across(c(sii, dt, armonizacion),
 #                    list(mean = ~mean(.),
 #                         q1 = ~quantile(., 0.25),

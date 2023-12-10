@@ -35,7 +35,7 @@ llave = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>%
 #             dup_p = sum(n>1)/nrow(.)*100)
 # 
 # a %>% 
-#   group_by(rut_empresa, ID) %>% 
+#   group_by(rut_empresa, ID2) %>% 
 #   mutate(n = n()) %>% 
 #   ungroup() %>% 
 #   summarise(uniq = sum(n==1),
@@ -45,7 +45,7 @@ llave = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>%
 # 
 # a %>% 
 #   #group_by(rut_empresa) %>% 
-#   summarise(serv = sum(ID %in% 39:43, na.rm=T)/nrow(.))
+#   summarise(serv = sum(ID2 %in% 39:43, na.rm=T)/nrow(.))
 
 files = list.files(path = "input/data/dt",
                    pattern = "1594")
@@ -130,7 +130,7 @@ ooss_micro = ooss_micro %>% #sin merge 168.908
 
 #Pasa de 168.908 a 470.622
 
-
+a = ooss_micro %>% filter(ano == 2019 & !is.na(ID2))
 
 # ooss_micro_b %>% 
 #   mutate(info = case_when(is.na(codigoactividad) & !is.na(cae_1d) ~ "Sólo DT",
@@ -145,7 +145,7 @@ ooss_micro = ooss_micro %>% #sin merge 168.908
 #   group_by(rut_empresa) %>% 
 #   summarise(sii = n_distinct(codigoactividad),
 #             dt = n_distinct(cae_1d),
-#             armonizacion = n_distinct(ID)) %>% 
+#             armonizacion = n_distinct(ID2)) %>% 
 #   summarise(across(c(sii, dt, armonizacion),
 #                    list(mean = ~mean(.),
 #                         q1 = ~quantile(., 0.25),
