@@ -10,22 +10,22 @@ pacman::p_load(tidyverse, sjmisc, writexl)
 # Cargar data -------------------------------------------------------------
 dt = readRDS("output/data/data_dt_proc_final.rds")
   
-ene = readRDS("output/data/ene_final_ID.rds") %>% 
-  mutate(ID2 = factor(ID2),
-         ano = as.numeric(ano)) %>% 
-  filter(!is.na(ID2) & ID2 != "Total")
+ene = readRDS("output/data/ene_final_CAENES_1d.rds") %>% 
+  mutate(CAENES_1d = factor(CAENES_1d),
+         ano = as.numeric(ano)) %>%
+  filter(!is.na(CAENES_1d) & CAENES_1d != "Total")
 
-olas = data.frame(ID2 = factor(rep(c(1:34), 14)),
-                  ano = map(2010:2023, ~rep(.x, 34)) %>% unlist())
+olas = data.frame(CAENES_1d = factor(rep(unique(dt$CAENES_1d), 14)),
+                  ano = map(2010:2023, ~rep(.x, 16)) %>% unlist())
 
 # Unificar ----------------------------------------------------------------
 data = list(ene, dt) %>% 
-  reduce(full_join, by = c("ID2", "ano")) %>% 
+  reduce(full_join, by = c("CAENES_1d", "ano")) %>% 
   merge(olas,
         ., 
-        by = c("ano", "ID2"), all = T) %>% 
-  arrange(ano, ID2) %>% 
-  filter(ano %in% 2010:2023 & ID2 != "34") %>% 
+        by = c("ano", "CAENES_1d"), all = T) %>% 
+  arrange(ano, CAENES_1d) %>% 
+  filter(ano %in% 2010:2023 & CAENES_1d != "34") %>% 
   mutate(across(total:por_cen,
                 ~tidyr::replace_na(., 0)),
          tasa_afiliacion = ifelse(if_all(c(n_afil_tot, total), ~.!=0), round((n_afil_tot/total)*100,3), 0),
@@ -33,8 +33,8 @@ data = list(ene, dt) %>%
          por_cobertura_cont = ifelse(if_all(c(cubiertos_cont, total), ~.!=0), round((cubiertos_cont/total)*100,3), 0),
          por_cobertura_otro = ifelse(if_all(c(cubiertos_otro, total), ~.!=0), round((cubiertos_otro/total)*100,3), 0),
          n_sind_mil = ifelse(if_all(c(n_sind, total), ~.!=0), round((n_sind/(total/1000))*100,3), 0)) %>% 
-  arrange(ID2, ano) %>%
-  #group_by(ID2, ano) %>% 
+  arrange(CAENES_1d, ano) %>%
+  #group_by(CAENES_1d, ano) %>% 
   mutate(across(c(tasa_afiliacion, por_cobertura, por_cobertura_cont, por_cobertura_otro),
                 ~ifelse(ano %in% 2011:2023, dplyr::lag(.), 0),
                 .names = "lag_{.col}")) %>%
@@ -56,7 +56,7 @@ data %>%
 data %>% 
   filter(if_any(c(tasa_afiliacion, por_cobertura, por_cobertura_cont),
                 ~.>100)) %>% 
-  select(ID2, ano, 
+  select(CAENES_1d, ano, 
          total, n_afil_tot, tasa_afiliacion,
          cubiertos_tot, por_cobertura,
          cubiertos_cont, por_cobertura_cont,
@@ -66,11 +66,11 @@ data %>%
 ids=data %>% 
   filter(if_any(c(tasa_afiliacion, por_cobertura, por_cobertura_cont),
                 ~.>100)) %>% 
-  select(ID2) %>% unique() %>% pull()
+  select(CAENES_1d) %>% unique() %>% pull()
 
 j=data %>% 
-  filter(ID2 %in% ids) %>% 
-  select(ID2, ano, 
+  filter(CAENES_1d %in% ids) %>% 
+  select(CAENES_1d, ano, 
          total, n_afil_tot, tasa_afiliacion,
          cubiertos_tot, por_cobertura,
          cubiertos_cont, por_cobertura_cont,

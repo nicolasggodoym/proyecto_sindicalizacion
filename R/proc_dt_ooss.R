@@ -22,7 +22,7 @@ llave = readRDS("input/data/dt/CAE_RUT_FINAL.rds") %>%
   select(-dv, -n)
 
 llave = merge(llave, read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
-            select(codigoactividad, ID2),
+            select(codigoactividad, ID2, CAENES_1d),
           by = "codigoactividad", all.x = T)
 
 # a %>% 
@@ -105,7 +105,15 @@ ooss_micro23 = ooss_micro[[8]] %>%
          ) %>% 
   mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
   dplyr::select(-dv) %>% 
-  merge(., llave, by = "rut_empresa", all.x = T)
+  merge(., llave, by = "rut_empresa", all.x = T) %>% 
+  mutate(cae_1d = as.numeric(str_sub(cae_1d, start = 2, end = 3))) %>% 
+  merge(., 
+        read_xlsx("oossmicro.xlsx") %>% 
+          select(cae_1d, ano, CAENES_1d_dt=CAENES_1d) %>% 
+          mutate(cae_1d = as.numeric(str_sub(cae_1d, start = 2, end = 3))) %>% 
+          unique() %>% na.omit,
+        by = c("cae_1d", "ano"), all.x=T) %>% 
+  mutate(CAENES_1d = ifelse(!is.na(CAENES_1d_dt), CAENES_1d_dt, CAENES_1d))
 
 ooss_micro = bind_rows(ooss_micro[-8]) %>% 
   select(rut_empresa, dv, ano,
@@ -125,12 +133,27 @@ ooss_micro = bind_rows(ooss_micro[-8]) %>%
 ooss_micro = ooss_micro %>% #sin merge 168.908
   mutate(rut_empresa = paste(rut_empresa, dv, sep = "-")) %>% 
   select(-dv) %>% 
-  merge(., llave, by = "rut_empresa", all.x = T)  #Con merge 169.230
+  merge(., llave, by = "rut_empresa", all.x = T) %>%   #Con merge 169.230
+  mutate(cae_1d = as.numeric(str_sub(cae_1d, start = 2, end = 3))) %>% 
+  merge(., 
+        read_xlsx("oossmicro.xlsx") %>% 
+          select(cae_1d, ano, CAENES_1d_dt=CAENES_1d) %>% 
+          mutate(cae_1d = as.numeric(str_sub(cae_1d, start = 2, end = 3))) %>% 
+          unique() %>% na.omit,
+        by = c("cae_1d", "ano"), all.x=T) %>% 
+  mutate(CAENES_1d = ifelse(!is.na(CAENES_1d_dt), CAENES_1d_dt, CAENES_1d))
   
+# 
+# a=ooss_micro[-8] %>% bind_rows() %>% 
+#   select(codigo_rae_sirela, 
+#          rama_de_actividad_economica_de_la_ooss_de_base, 
+#          ano) %>% 
+#   unique() %>% arrange(codigo_rae_sirela)
+# write_xlsx(a, "oossmicro.xlsx")
 
 #Pasa de 168.908 a 470.622
 
-a = ooss_micro %>% filter(ano == 2019 & !is.na(ID2))
+#a = ooss_micro %>% filter(ano == 2019 & !is.na(ID2))
 
 # ooss_micro_b %>% 
 #   mutate(info = case_when(is.na(codigoactividad) & !is.na(cae_1d) ~ "Sólo DT",

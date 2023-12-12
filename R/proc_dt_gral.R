@@ -13,7 +13,9 @@ pacman::p_load(tidyverse, sjmisc, readxl, data.table)
 # NC y Huelgas ------------------------------------------------------------
 files = list.files("input/data/dt", pattern = ".rds")[2:4]
 
-nc_h = map(files, ~readRDS(paste0("input/data/dt/", .x)) #%>% merge(., llave, by = "ID", all.x = T)
+nc_h = map(files, ~readRDS(paste0("input/data/dt/", .x)) %>% 
+             merge(., read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
+                       select(ID2, CAENES_1d) %>% unique, by = "ID2", all.x = T)
            )
 
 names(nc_h) = str_remove(files, pattern = ".rds$")
@@ -39,7 +41,7 @@ h_nt = huelgas_ntrab_dt %>%
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
-  group_by(ID2, ano) %>% 
+  group_by(CAENES_1d, ano) %>% 
   summarise(n_huelgas = n(),
             n_trab_huelga_tot = sum(trab_tot_h, na.rm = T),
             n_trab_huelga_fem = sum(trab_fem_h, na.rm = T),
@@ -47,7 +49,7 @@ h_nt = huelgas_ntrab_dt %>%
             mean_trab_huelga_tot = mean(trab_tot_h, na.rm = T),
             mean_trab_huelga_fem = mean(trab_fem_h, na.rm = T),
             mean_trab_huelga_mas = mean(trab_mas_h, na.rm = T)) %>% 
-  filter(!is.na(ID2))
+  filter(!is.na(CAENES_1d))
 
 h_dur = huelgas_dur_dt %>% 
   group_by(rut_empresa, rsu, codigoactividad, ano, fecha, dias_h, resultado_neg_h, trab_mas_h,
@@ -55,11 +57,11 @@ h_dur = huelgas_dur_dt %>%
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
-  group_by(ID2, ano) %>% 
+  group_by(CAENES_1d, ano) %>% 
   summarise(huelgas_dur = mean(dias_h, na.rm = T),
             n_dptp = sum(trab_tot_h*dias_h),
             mean_dptp = mean(trab_tot_h*dias_h)) %>% 
-  filter(!is.na(ID2))
+  filter(!is.na(CAENES_1d))
   
 nc = neg_col_dt %>% 
   group_by(rut_empresa, rsu, codigoactividad, ano, trab_empresa_nc, tipo_inst, tipo_neg,
@@ -67,12 +69,12 @@ nc = neg_col_dt %>%
   mutate(n = 1:n()) %>% 
   filter(n==1) %>% 
   ungroup() %>% 
-  group_by(ID2, ano) %>% 
+  group_by(CAENES_1d, ano) %>% 
   filter(trab_tot_nc < quantile(trab_tot_nc, .99, na.rm=T)) %>% 
   summarise(cubiertos_tot = sum(trab_tot_nc, na.rm = T),
             cubiertos_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_mas = sum(trab_mas_nc, na.rm = T)) %>% 
-  filter(!is.na(ID2))
+  filter(!is.na(CAENES_1d))
 
 nc_contrato = neg_col_dt %>% 
   group_by(rut_empresa, rsu, codigoactividad, ano, trab_empresa_nc, tipo_inst, tipo_neg,
@@ -80,12 +82,12 @@ nc_contrato = neg_col_dt %>%
   mutate(n = 1:n()) %>% 
   filter(n==1 & tipo_inst == "Contrato Colectivo") %>% 
   ungroup() %>% 
-  group_by(ID2, ano) %>% 
+  group_by(CAENES_1d, ano) %>% 
   filter(trab_tot_nc < quantile(trab_tot_nc, .99, na.rm=T)) %>% 
   summarise(cubiertos_cont = sum(trab_tot_nc, na.rm = T),
             cubiertos_cont_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_cont_mas = sum(trab_mas_nc, na.rm = T)) %>% 
-  filter(!is.na(ID2))
+  filter(!is.na(CAENES_1d))
 
 nc_otro = neg_col_dt %>% 
   group_by(rut_empresa, rsu, codigoactividad, ano, trab_empresa_nc, tipo_inst, tipo_neg,
@@ -93,12 +95,12 @@ nc_otro = neg_col_dt %>%
   mutate(n = 1:n()) %>% 
   filter(n==1 & tipo_inst != "Contrato Colectivo") %>% 
   ungroup() %>% 
-  group_by(ID2, ano) %>% 
+  group_by(CAENES_1d, ano) %>% 
   filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
   summarise(cubiertos_otro = sum(trab_tot_nc, na.rm = T),
             cubiertos_otro_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_otro_mas = sum(trab_mas_nc, na.rm = T)) %>% 
-  filter(!is.na(ID2))
+  filter(!is.na(CAENES_1d))
 
 sind = ooss %>% 
   select(-c(cae_1d)) %>% 
@@ -106,7 +108,7 @@ sind = ooss %>%
   mutate(n = 1:n()) %>% 
   filter(n==1 & !tipo_org %in% c("Asociacion de funcionarios", "ASOCIACION DE FUNCIONARIOS")) %>% 
   ungroup() %>% 
-  group_by(ID2, ano) %>% 
+  group_by(CAENES_1d, ano) %>% 
   filter(afil_tot < quantile(afil_tot, .975, na.rm=T)) %>% 
   summarise(n_sind = n(),
             n_afil_tot = sum(afil_tot, na.rm = T),
@@ -120,11 +122,11 @@ sind = ooss %>%
             por_conf = round(sum(!is.na(rsu_conf))/n()*100, 3),
             por_cen = round(sum(!is.na(rsu_cen))/n()*100, 3)) %>% 
   ungroup() %>% 
-  mutate(ID2 = factor(ID2)) %>% 
-  filter(!is.na(ID2))
+  mutate(CAENES_1d = factor(CAENES_1d)) %>% 
+  filter(!is.na(CAENES_1d))
 
 
 data = list(nc, nc_contrato, nc_otro, h_nt, h_dur, sind) %>% 
-  reduce(full_join, by = c("ID2", "ano"))
+  reduce(full_join, by = c("CAENES_1d", "ano"))
 
 saveRDS(data, "output/data/data_dt_proc_final.rds")
