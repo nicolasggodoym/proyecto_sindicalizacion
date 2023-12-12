@@ -1,8 +1,13 @@
-
+rm(list=ls())
 # Preparación de datos ----------------------------------------------------
-
+pacman::p_load(tidyverse, sjmisc)
 # Cargar datos ------------------------------------------------------------
 ohl <- read.csv2("input/data/OHL1979_2020.csv", na.strings = "")
+llave = read_xlsx("input/data/anuario_dt.xlsx", 
+                          sheet = "rev3-rev4") %>% 
+  mutate(across(c(actividad3, actividad4),
+                ~str_extract(., "\\d{1,2}"))) %>% 
+  rename(sector3=actividad3, sector4=actividad4)
 
 # Selección y filtrado ----------------------------------------------------
 ohl_p <- ohl %>% 
@@ -19,10 +24,17 @@ ohl_p <- ohl %>%
          #reg1,
          leg,
          dptp = dhtp) %>% 
+  merge(.,
+        llave %>% select(sector3, CAENES_1d3=CAENES_1d) %>% unique,
+        by = "sector3", all.x = T) %>% 
+  merge(.,
+        llave %>% select(sector4, CAENES_1d4=CAENES_1d) %>% unique,
+        by = "sector4", all.x = T) %>% 
 
 # Recodificación ----------------------------------------------------------
 
-  mutate(actividad_raw = case_when(sector2 == 1 | sector3 %in% c(1,2) | sector4 == 0 ~ "1. Agricultura, ganadería, silvicultura y pesca",
+  mutate(CAENES_1d = ifelse(!is.na(CAENES_1d3), CAENES_1d3, CAENES_1d4),
+         actividad_raw = case_when(sector2 == 1 | sector3 %in% c(1,2) | sector4 == 0 ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    sector2 == 2 | sector3 == 3 | sector4 == 1 ~ "2. Minería",
                                    sector2 == 3 | sector3 == 4 | sector4 == 2 ~ "3. Industrias manufactureras",
                                    sector2 == 4 | sector3 == 5 | sector4 %in% c(3,4) ~ "4. Suministro de electricidad, gas y agua",
@@ -43,6 +55,7 @@ ohl_p <- ohl %>%
   ungroup() %>% 
   select(ano,
          actividad_raw,
+         CAENES_1d,
          duracion,
          ddpp,
          rangoemp,
