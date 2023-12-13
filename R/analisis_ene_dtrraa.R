@@ -1,6 +1,6 @@
 rm(list=ls())
 
-# Gráficos de dispersión ENE-OHL-AnuarioDT --------------------------------
+# Gráficos de dispersión ENE-RRAADT CAENES 1d --------------------------------
 
 
 # Cargar paquetes ---------------------------------------------------------
@@ -22,12 +22,12 @@ data = readRDS("output/data/data_dt_ene_final.rds") %>%
 # Afiliación sindical x Número de huelgas ---------------------------------
 
 # data %>% 
-#   filter(t == "2011-2015") %>% 
+#   filter(t == "2010-2015") %>% 
 #   ggplot(aes(x = tasa_afiliacion, y = n_huelgas, label = CAENES_1d)) +
 #   geom_point() +
 #   geom_smooth(method="lm", se = F)+
 #   labs(title = "Relación entre afiliación sindical y número de huelgas",
-#        subtitle = "2011-2015",
+#        subtitle = "2010-2015",
 #        x = "Tasa de afiliación sindical",
 #        y = "Número de huelgas",
 #        color = "Act. económica") +
@@ -80,12 +80,12 @@ ggsave("output/img/graficos_ene_dtrraa/densidad_nhuelgas_1619.png", last_plot(),
 # N sindicatos x N de huelgas ---------------------------------------------
 
 # data %>% 
-#   filter(t == "2011-2015") %>% 
+#   filter(t == "2010-2015") %>% 
 #   ggplot(aes(x = n_sind_mil, y = n_huelgas, label = CAENES_1d)) +
 #   geom_point() +
 #   geom_smooth(method="lm", se = F)+
 #   labs(title = "Relación entre fragmentación sindical y número de huelgas",
-#        subtitle = "2011-2015",
+#        subtitle = "2010-2015",
 #        x = "N. de sindicatos c/mil trabajadores",
 #        y = "Número de huelgas",
 #        color = "Act. económica") +
@@ -141,12 +141,12 @@ ggsave("output/img/graficos_ene_dtrraa/fragmentacion_nhuelgas_1519.png", last_pl
 
 
 # data %>% 
-#   filter(t == "2011-2015") %>% 
+#   filter(t == "2010-2015") %>% 
 #   ggplot(aes(x = por_cobertura_cont, y = n_huelgas, label = CAENES_1d)) +
 #   geom_point() +
 #   geom_smooth(method="lm", se = F)+
 #   labs(title = "Relación entre tasa de cobertura de contratos colectivos y número de huelgas",
-#        subtitle = "2011-2015",
+#        subtitle = "2010-2015",
 #        x = "N. de sindicatos c/mil trabajadores",
 #        y = "Número de huelgas",
 #        color = "Act. económica") +

@@ -2,8 +2,8 @@
     "sortOrder": [
         {
             "columnIndex": 2,
-            "ascending": true
+            "ascending": false
         }
     ],
-    "path": "~/GitHub/proyecto_sindicalizacion/input/data/dt"
+    "path": "~/GitHub/proyecto_sindicalizacion/output/img/graficos_ene_dtrraa"
 }
