@@ -11,10 +11,10 @@ pacman::p_load(tidyverse, sjmisc, readxl, data.table)
 #   unique
 
 # NC y Huelgas ------------------------------------------------------------
-files = list.files("input/data/dt", pattern = ".rds")[2:4]
+files = list.files("input/data/dt", pattern = ".rds")[3:5]
 
 nc_h = map(files, ~readRDS(paste0("input/data/dt/", .x)) %>% 
-             merge(., read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
+             merge(., read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>%
                        select(ID2, CAENES_1d) %>% unique, by = "ID2", all.x = T)
            )
 
@@ -96,7 +96,7 @@ nc_otro = neg_col_dt %>%
   filter(n==1 & tipo_inst != "Contrato Colectivo") %>% 
   ungroup() %>% 
   group_by(CAENES_1d, ano) %>% 
-  filter(trab_tot_nc < quantile(trab_tot_nc, .975, na.rm=T)) %>% 
+  filter(trab_tot_nc < quantile(trab_tot_nc, .99, na.rm=T)) %>% 
   summarise(cubiertos_otro = sum(trab_tot_nc, na.rm = T),
             cubiertos_otro_fem = sum(trab_fem_nc, na.rm = T),
             cubiertos_otro_mas = sum(trab_mas_nc, na.rm = T)) %>% 
@@ -109,7 +109,7 @@ sind = ooss %>%
   filter(n==1 & !tipo_org %in% c("Asociacion de funcionarios", "ASOCIACION DE FUNCIONARIOS")) %>% 
   ungroup() %>% 
   group_by(CAENES_1d, ano) %>% 
-  filter(afil_tot < quantile(afil_tot, .975, na.rm=T)) %>% 
+  filter(afil_tot < quantile(afil_tot, .99, na.rm=T)) %>% 
   summarise(n_sind = n(),
             n_afil_tot = sum(afil_tot, na.rm = T),
             n_afil_mas = sum(afil_mas, na.rm = T),

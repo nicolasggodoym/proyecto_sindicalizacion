@@ -15,8 +15,8 @@ ene = readRDS("output/data/ene_final_CAENES_1d.rds") %>%
          ano = as.numeric(ano)) %>%
   filter(!is.na(CAENES_1d) & CAENES_1d != "Total")
 
-olas = data.frame(CAENES_1d = factor(rep(unique(dt$CAENES_1d), 14)),
-                  ano = map(2010:2023, ~rep(.x, 16)) %>% unlist())
+olas = data.frame(CAENES_1d = factor(rep(levels(ene$CAENES_1d)[1:14], 14)),
+                  ano = map(2010:2023, ~rep(.x, 14)) %>% unlist())
 
 # Unificar ----------------------------------------------------------------
 data = list(ene, dt) %>% 
@@ -25,7 +25,7 @@ data = list(ene, dt) %>%
         ., 
         by = c("ano", "CAENES_1d"), all = T) %>% 
   arrange(ano, CAENES_1d) %>% 
-  filter(ano %in% 2010:2023 & CAENES_1d != "34") %>% 
+  filter(ano %in% 2010:2023 & CAENES_1d != "T") %>% 
   mutate(across(total:por_cen,
                 ~tidyr::replace_na(., 0)),
          tasa_afiliacion = ifelse(if_all(c(n_afil_tot, total), ~.!=0), round((n_afil_tot/total)*100,3), 0),
