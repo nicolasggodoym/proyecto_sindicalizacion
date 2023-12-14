@@ -10,7 +10,8 @@ pacman::p_load(tidyverse, readxl, RColorBrewer, patchwork, ggplot2, ggpubr, ggre
 llave = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
   select(ID2, CAENES_1d) %>% unique
 data = readRDS("output/data/data_dt_ene_finalID2.rds") %>% 
-  mutate(t = ifelse(ano %in% 2010:2015, "2010-2015", "2016-2019")) %>% 
+  mutate(t = ifelse(ano %in% 2010:2015, "2010-2015", "2016-2019"),
+         n_sind_mil = n_sind_mil/100) %>% 
   group_by(t, ID2) %>% 
   summarise(across(c(tasa_afiliacion, n_huelgas, n_sind_mil, por_cobertura_cont),
                    ~mean(.))) %>% 
@@ -192,7 +193,8 @@ data %>%
        subtitle = "2010-2019",
        x = "N. de sindicatos c/mil trabajadores",
        y = "Número de huelgas",
-       color = "Act. económica") +
+       color = "Act. económica",
+       shape = "Período") +
   geom_text_repel(vjust = 1.5) +
   stat_cor(method="pearson",
            label.x.npc = 0.78, label.y.npc = 0.87) +

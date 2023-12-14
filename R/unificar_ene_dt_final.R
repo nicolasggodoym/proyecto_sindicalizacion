@@ -32,7 +32,7 @@ data = list(ene, dt) %>%
          por_cobertura = ifelse(if_all(c(cubiertos_tot, total), ~.!=0), round((cubiertos_tot/total)*100,3), 0),
          por_cobertura_cont = ifelse(if_all(c(cubiertos_cont, total), ~.!=0), round((cubiertos_cont/total)*100,3), 0),
          por_cobertura_otro = ifelse(if_all(c(cubiertos_otro, total), ~.!=0), round((cubiertos_otro/total)*100,3), 0),
-         n_sind_mil = ifelse(if_all(c(n_sind, total), ~.!=0), round((n_sind/(total/1000))*100,3), 0)) %>% 
+         n_sind_mil = ifelse(if_all(c(n_sind, total), ~.!=0), round((n_sind/(total/1000)),3), 0)) %>% 
   arrange(CAENES_1d, ano) %>%
   #group_by(CAENES_1d, ano) %>% 
   mutate(across(c(tasa_afiliacion, por_cobertura, por_cobertura_cont, por_cobertura_otro),

@@ -32,7 +32,7 @@ data = list(ene, ohl, dt) %>%
                 ~ifelse(is.na(.), 0, .))) %>% 
   arrange(ano, CAENES_1d) %>% 
   mutate(tasa_afiliacion = ifelse(if_all(c(afiliados, total), ~.!=0), round((afiliados/total)*100,3), 0),
-         n_sindicatos = ifelse(if_all(c(n_sindicatos, total), ~.!=0), round((n_sindicatos/(total/1000))*100,3), 0)) %>% 
+         n_sindicatos = ifelse(if_all(c(n_sindicatos, total), ~.!=0), round((n_sindicatos/(total/1000)),3), 0)) %>% 
   arrange(CAENES_1d, ano) %>%
   #group_by(CAENES_1d, ano) %>% 
   mutate(across(c(tasa_afiliacion, n_sindicatos, n_huelga, duracion, tc, dptp),
