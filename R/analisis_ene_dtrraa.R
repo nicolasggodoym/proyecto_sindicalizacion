@@ -52,7 +52,7 @@ data %>%
        color = "Act. económica") +
   geom_text(vjust = 1.5) +
   stat_cor(method="pearson",
-           label.x.npc = 0.78, label.y.npc = 0.95) +
+           label.x.npc = 0.78, label.y.npc = 0.95, aes(label = ..r.label..)) +
   theme_bw() +
   theme(legend.position="bottom")
 
@@ -110,7 +110,7 @@ data %>%
        color = "Act. económica") +
   geom_text(vjust = 1.5) +
   stat_cor(method="pearson",
-           label.x.npc = 0.78, label.y.npc = 0.95) +
+           label.x.npc = 0.78, label.y.npc = 0.95, aes(label = ..r.label..)) +
   theme_bw() +
   theme(legend.position="bottom")
 
@@ -171,7 +171,7 @@ data %>%
        color = "Act. económica") +
   geom_text(vjust = 1.5) +
   stat_cor(method="pearson",
-           label.x.npc = 0.78, label.y.npc = 0.95) +
+           label.x.npc = 0.78, label.y.npc = 0.95, aes(label = ..r.label..)) +
   theme_bw() +
   theme(legend.position="bottom")
 
