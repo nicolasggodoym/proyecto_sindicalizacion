@@ -9,13 +9,16 @@ pacman::p_load(tidyverse,
                readxl)
 
 # Cargar datos ------------------------------------------------------------
-files = list.files("input/data/ene", pattern = "-11.RData") %>% 
-  str_remove("-11.RData")
+files = list.files("input/data/ene", pattern = ".RData")
 
-filesdta = list.files("input/data/ene", pattern = ".dta") 
+files = files[str_detect(files, "-(11|9).RData")]
 
-data.list = imap(files, ~get(load(paste0("input/data/ene/", .x, "-11.RData"))))
-data.list = setNames(data.list, files %>% str_remove("ene-"))
+files = files[!str_detect(files, "ene-\\d{4}-9.RData")]
+
+#filesdta = list.files("input/data/ene", pattern = ".dta") 
+
+data.list = imap(files, ~get(load(paste0("input/data/ene/", .x))))
+data.list = setNames(data.list, files %>% str_remove("ene-") %>% str_remove("-\\d{1,2}.RData"))
 
 # data.list.dta = imap(filesdta, ~haven::read_dta(paste0("input/data/ene/", .x)))
 # data.list.dta = setNames(data.list.dta, filesdta %>% 
@@ -39,6 +42,8 @@ llave = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>%
 
 data.list[["2019"]] = data.list[["2019"]] %>% 
   rename(b1_ciuo88 = b1)
+
+map(data.list[[]])
 
 data.list = data.list %>% 
   map_if(., ~ncol(.x) == 40, 
