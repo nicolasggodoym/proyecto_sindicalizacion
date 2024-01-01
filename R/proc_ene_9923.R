@@ -43,7 +43,13 @@ llave = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>%
 data.list[["2019"]] = data.list[["2019"]] %>% 
   rename(b1_ciuo88 = b1)
 
-map(data.list[[]])
+data.list[c("2020", "2021", "2022", "2023")] = data.list[c("2020", "2021", "2022", "2023")] %>% 
+  map(., 
+      ~.x %>% 
+        rename(b13_caenes_2d = b13_2_caenes,
+               b14_caenes_2d = b14_2_caenes,
+               id_directorio = conglomerado))
+                                                          
 
 data.list = data.list %>% 
   map_if(., ~ncol(.x) == 40, 
@@ -54,8 +60,7 @@ data.list = data.list %>%
                              id = hogar, 
                              fe = fact, 
                              ciiu = p07,
-                             cise = p08,
-                             sexo = ) %>% 
+                             cise = p08) %>% 
            mutate(ciiu = case_when(ciiu == 1 ~ "1. Agricultura, ganadería, silvicultura y pesca",
                                    ciiu == 2 ~ "2. Minería",
                                    ciiu == 3 ~ "3. Industrias manufactureras",
@@ -379,12 +384,12 @@ data.list = data.list %>%
            select(-c(ciuo, ciiu13, ciiu14)),
          .progress = T)
 
-a = data.list[files[1:10]]
-
-a = bind_rows(a)
-
-frq(a$ID)
-frq(a$ciiu)
+# a = data.list[files[1:10]]
+# 
+# a = bind_rows(a)
+# 
+# frq(a$ID)
+# frq(a$ciiu)
 
 
 
