@@ -300,7 +300,7 @@ data.list = data.list %>%
                   unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
            select(-c(ciuo, ciiu13, ciiu14)),
          .progress = T) %>% 
-  map_if(., ~ncol(.x) > 143, 
+  map_if(., ~ncol(.x) %in% 143:168, 
          ~ .x %>% 
            mutate_at(vars(-c(ano_trimestre, estrato, id_directorio, hogar, fact_cal,
                              b13_caenes_2d,
@@ -382,6 +382,89 @@ data.list = data.list %>%
                   contract_type = ifelse(contract_type == "Completa", "Completa", "No"),
                   unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")) %>%
            select(-c(ciuo, ciiu13, ciiu14)),
+         .progress = T) %>% 
+  map_if(., ~ncol(.x) > 168, 
+         ~ .x %>% 
+           # mutate_at(vars(-c(ano_trimestre, estrato, id_directorio, hogar, fact_cal,
+           #                   b13_caenes_2d,
+           #                   b14_caenes_2d)),
+           #           ~haven::as_factor(.)) %>% 
+           select(ano = ano_trimestre, 
+                  estrato, 
+                  cong = id_directorio, 
+                  id = hogar, 
+                  fe = fact_cal, 
+                  b2,
+                  b12,
+                  b13_caenes_2d,
+                  b14_caenes_2d,
+                  ciiu13 = b13_rev4cl_caenes,
+                  ciiu14 = b14_rev4cl_caenes,
+                  cise = categoria_ocupacion,
+                  ciuo = b1,
+                  contract_duration = b9,
+                  tamano = b15_1,
+                  job_seniority = b17_ano,
+                  contract_type = b8,
+                  unempl = cae_general,
+                  sexo,
+                  edad) %>% 
+           mutate(across(ends_with("_2d"), ~ifelse(. == 999, NA, as.numeric(.)))) %>% 
+           merge(., 
+                 llave %>% rename(b13_caenes_2d = CAENES_ENE, ID13 = ID, ID132 = ID2),
+                 by = "b13_caenes_2d", all.x = T) %>% 
+           merge(., 
+                 llave %>% rename(b14_caenes_2d = CAENES_ENE, ID14 = ID, ID142 = ID2),
+                 by = "b14_caenes_2d", all.x = T) %>% 
+           mutate(ID = case_when(b12 == 1 | b2 == 1 | is.na(ID13)  ~ ID14, 
+                                 b12 != 1 | is.na(ID14)  ~ ID13,
+                                 TRUE ~ NA_real_),
+                  ID2 = case_when(b12 == 1 | b2 == 1 | is.na(ID132)  ~ ID142, 
+                                  b12 != 1 | is.na(ID142)  ~ ID132,
+                                  TRUE ~ NA_real_),
+                  # ciiu = case_when((b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Agricultura, ganadería, silvicultura y pesca"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Agricultura, ganadería, silvicultura y pesca")) ~ "1. Agricultura, ganadería, silvicultura y pesca",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Explotación de minas y canteras"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Explotación de minas y canteras"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Explotación de minas y canteras")) ~ "2. Minería",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Industrias manufactureras"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Industrias manufactureras"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Industrias manufactureras")) ~ "3. Industrias manufactureras",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Suministro de electricidad, gas, vapor y aire acondicionado", "Suministro de agua")) ~ "4. Suministro de electricidad, gas y agua",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Construcción"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Construcción"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Construcción")) ~ "5. Construcción",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Comercio al por mayor y al por menor", "Actividades de alojamiento y de servicio de comidas")) ~ "6. Comercio, hoteles y restaurantes",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Transporte y almacenamiento", "Información y comunicaciones"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Transporte y almacenamiento", "Información y comunicaciones"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Transporte y almacenamiento", "Información y comunicaciones")) ~ "7. Transporte y comunicaciones",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu14 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo"))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & ciiu13 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo"))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & ciiu14 %in% c("Actividades financieras y de seguros", "Actividades inmobiliarias", "Actividades profesionales, científicas y técnicas", "Actividades de servicios administrativos y de apoyo")) ~ "8. Servicios financieros, inmobiliarios y empresariales",
+                  #                  (b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu14))|
+                  #                    (!b12 %in% "…directamente con la empresa en donde trabaja?" & !is.na(ciiu13))|
+                  #                    (b2 %in% "…para su propio negocio, empresa o actividad por cuenta propia?" & !is.na(ciiu14)) ~ "9. Servicios sociales, domésticos, profesionales y otros",
+                  #                  TRUE ~ NA_character_),
+                  cp_priv = ifelse(cise %in% c(2,3,5,6),
+                                   "CP/Priv", "No"),
+                  sexo = ifelse(sexo ==2, "Mujer", "No"),
+                  self_empl = ifelse(cise == 2,
+                                     "CP", "No"),
+                  skills = ifelse(ciuo %in% c(2,3), "Experto", "No"),
+                  contract_duration = ifelse(contract_duration == 2, "Indefinido", "No"),
+                  tamano = ifelse(tamano %in% c(4,5), "Más de 50", "No"),
+                  edad = str_extract(edad, pattern = "\\d{1,3}") %>% as.numeric(.),
+                  job_seniority = str_extract(job_seniority, pattern = "\\d{4}") %>% as.numeric(.),
+                  job_seniority = ifelse(!is.na(job_seniority) & !job_seniority %in% c(8888,9999), ano - job_seniority, NA),
+                  job_seniority = ifelse(job_seniority == -1, 0, job_seniority),
+                  contract_type = ifelse(contract_type == 1, "Completa", "No")#,  unempl = ifelse(unempl %in% c("Cesante", "Busca trabajo por primera vez", "Iniciador", "Inactivos que buscaron", "Inactivos que estuvieron disponibles"), "Desempleado", "No")
+                  ) %>%
+           select(-c(ciuo, ciiu13, ciiu14)),
          .progress = T)
 
 # a = data.list[files[1:10]]
@@ -412,5 +495,5 @@ data.list = data.list %>%
 
 # Exportar ----------------------------------------------------------------
 
-save(data.list, file="output/data/ene_86_19.RData")
+save(data.list, file="output/data/ene_86_23.RData")
 

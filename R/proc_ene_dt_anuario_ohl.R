@@ -38,7 +38,9 @@ data = list(ene, ohl, dt) %>%
   mutate(across(c(tasa_afiliacion, n_sindicatos, n_huelga, duracion, tc, dptp),
                 ~ifelse(ano %in% 2011:2023, dplyr::lag(.), 0),
                 .names = "lag_{.col}"),
-         t = ifelse(ano %in% 2011:2015, "2011-2015", "2016-2019")) %>%
+         t = case_when(ano %in% 2011:2015 ~ "2011-2015", 
+                       ano %in% 2011:2015 ~ "2016-2019", 
+                       TRUE ~ "2020-2023")) %>%
   ungroup() %>% 
   select(ano, t, CAENES_1d, total:lag_dptp)
 
