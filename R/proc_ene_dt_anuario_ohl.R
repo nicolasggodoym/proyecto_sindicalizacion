@@ -39,8 +39,9 @@ data = list(ene, ohl, dt) %>%
                 ~ifelse(ano %in% 2011:2023, dplyr::lag(.), 0),
                 .names = "lag_{.col}"),
          t = case_when(ano %in% 2011:2015 ~ "2011-2015", 
-                       ano %in% 2011:2015 ~ "2016-2019", 
-                       TRUE ~ "2020-2023")) %>%
+                       ano %in% 2016:2019 ~ "2016-2019", 
+                       ano %in% 2020:2023 ~ "2020-2023",
+                       TRUE ~ NA_character_)) %>%
   ungroup() %>% 
   select(ano, t, CAENES_1d, total:lag_dptp)
 

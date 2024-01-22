@@ -11,7 +11,7 @@ llave = read_xlsx("input/data/anuario_dt.xlsx",
 
 # Selección y filtrado ----------------------------------------------------
 ohl_p <- ohl %>% 
-  filter(yr %in% c(1998:2019) & inst %in% c(1,2)) %>% 
+  filter(yr %in% c(1998:2020) & inst %in% c(1,2)) %>% 
   select(sector2 = ciuur2,
          sector3 = ciuur3,
          sector4 = ciuur4,

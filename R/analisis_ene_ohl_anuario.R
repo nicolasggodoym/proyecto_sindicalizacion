@@ -37,7 +37,7 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_ohl_anuariodt/densidad_nhuelgas_1115.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)
 
 data %>% 
   filter(t == "2016-2019") %>% 
@@ -56,9 +56,11 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_ohl_anuariodt/densidad_nhuelgas_1619.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)
+
 
 data %>% 
+  filter(!t %in% "2020-2023") %>% 
   ggplot(aes(x = tasa_afiliacion, y = n_huelga, label = CAENES_1d)) +
   geom_point(aes(color = t)) +
   geom_smooth(method="lm", se = F)+
@@ -74,7 +76,7 @@ data %>%
   theme(legend.position="bottom")
   
 ggsave("output/img/graficos_ene_ohl_anuariodt/densidad_nhuelgas_1119.png", last_plot(),
-       width = 10, height = 8)
+       width = 9, height = 7)
 
 # N sindicatos x N de huelgas ---------------------------------------------
 
@@ -95,7 +97,7 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_ohl_anuariodt/fragmentacion_nhuelgas_1115.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)
 
 data %>% 
   filter(t == "2016-2019") %>% 
@@ -114,9 +116,10 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_ohl_anuariodt/fragmentacion_nhuelgas_1519.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)
 
 data %>% 
+  filter(!t %in% "2020-2023") %>% 
   ggplot(aes(x = n_sindicatos, y = n_huelga, label = CAENES_1d)) +
   geom_point(aes(color = t)) +
   geom_smooth(method="lm", se = F)+
@@ -132,4 +135,4 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_ohl_anuariodt/fragmentacion_nhuelgas_1119.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)

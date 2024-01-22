@@ -9,8 +9,11 @@ pacman::p_load(tidyverse, readxl, RColorBrewer, patchwork, ggplot2, ggpubr, ggre
 # Cargar data -------------------------------------------------------------
 llave = read_xlsx("input/data/dt/CAE_DT_armonizado.xlsx") %>% 
   select(ID2, CAENES_1d) %>% unique
-data = readRDS("output/data/data_dt_ene_finalID2.rds") %>% 
-  mutate(t = ifelse(ano %in% 2010:2015, "2010-2015", "2016-2019"),
+data = readRDS("output/data/data_dt_ene_final.rds") %>% 
+  mutate(t = case_when(ano %in% 2010:2015 ~ "2010-2015", 
+                       ano %in% 2016:2019 ~ "2016-2019", 
+                       ano %in% 2020:2023 ~ "2020-2023",
+                       TRUE ~ NA_character_),
          n_sind_mil = n_sind_mil/100) %>% 
   group_by(t, ID2) %>% 
   summarise(across(c(tasa_afiliacion, n_huelgas, n_sind_mil, por_cobertura_cont),
@@ -20,7 +23,8 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
         llave,
         by = "ID2",
         all.x = T) %>%
-  select(CAENES_1d, ID2, everything())
+  select(CAENES_1d, ID2, everything()) %>% 
+  filter(if_all(c(CAENES_1d, ID2, t), ~!is.na(.)))
 
 
 # Gráficos ----------------------------------------------------------------
@@ -45,7 +49,7 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
 #   theme(legend.position="bottom")
 
 # ggsave("output/img/graficos_ene_dtrraa/densidad_nhuelgas_1115ID2.png", last_plot(),
-#        width = 10, height = 8)
+#        width = 7, height = 5)
 
 # data %>% 
 #   filter(t == "2016-2019") %>% 
@@ -64,7 +68,7 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
 #   theme(legend.position="bottom")
 # 
 # ggsave("output/img/graficos_ene_dtrraa/densidad_nhuelgas_1619ID2.png", last_plot(),
-#        width = 10, height = 8)
+#        width = 7, height = 5)
 
 # data %>% 
 #   ggplot(aes(x = tasa_afiliacion, y = n_huelgas, label = ID2)) +
@@ -82,7 +86,7 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
 #   theme(legend.position="bottom")
 # 
 # ggsave("output/img/graficos_ene_dtrraa/densidad_nhuelgas_1119ID2.png", last_plot(),
-#        width = 10, height = 8)
+#        width = 7, height = 5)
 
 # N sindicatos x N de huelgas ---------------------------------------------
 
@@ -103,7 +107,7 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
 #   theme(legend.position="bottom")
 # 
 # ggsave("output/img/graficos_ene_dtrraa/fragmentacion_nhuelgas_1115ID2.png", last_plot(),
-#        width = 10, height = 8)
+#        width = 7, height = 5)
 
 # data %>% 
 #   filter(t == "2016-2019") %>% 
@@ -122,7 +126,7 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
 #   theme(legend.position="bottom")
 # 
 # ggsave("output/img/graficos_ene_dtrraa/fragmentacion_nhuelgas_1519ID2.png", last_plot(),
-#        width = 10, height = 8)
+#        width = 7, height = 5)
 
 # data %>% 
 #   ggplot(aes(x = n_sind_mil, y = n_huelgas, label = ID2)) +
@@ -140,7 +144,7 @@ data = readRDS("output/data/data_dt_ene_finalID2.rds") %>%
 #   theme(legend.position="bottom")
 # 
 # ggsave("output/img/graficos_ene_dtrraa/fragmentacion_nhuelgas_1119ID2.png", last_plot(),
-#        width = 10, height = 8)
+#        width = 7, height = 5)
 
 
 
@@ -164,7 +168,7 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_dtrraa/cobertura_nhuelgas_1015ID2.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)
 
 data %>% 
   filter(t == "2016-2019") %>% 
@@ -183,7 +187,26 @@ data %>%
   theme(legend.position="bottom")
 
 ggsave("output/img/graficos_ene_dtrraa/cobertura_nhuelgas_1519ID2.png", last_plot(),
-       width = 10, height = 8)
+       width = 7, height = 5)
+
+data %>% 
+  filter(t == "2020-2023") %>% 
+  ggplot(aes(x = por_cobertura_cont, y = n_huelgas, label = ID2)) +
+  geom_point(aes(color = CAENES_1d)) +
+  geom_smooth(method="lm", se = F)+
+  labs(title = "Relación entre tasa de cobertura de contratos colectivos y número de huelgas",
+       subtitle = "2020-2023",
+       x = "Tasa de cobertura de negociación colectiva",
+       y = "Número de huelgas",
+       color = "Act. económica") +
+  geom_text_repel(vjust = 1.5) +
+  stat_cor(method="pearson",
+           label.x.npc = 0.78, label.y.npc = 0.95, aes(label = ..r.label..)) +
+  theme_bw() +
+  theme(legend.position="bottom")
+
+ggsave("output/img/graficos_ene_dtrraa/cobertura_nhuelgas_2023ID2.png", last_plot(),
+       width = 7, height = 5)
 
 data %>%
   ggplot(aes(x = por_cobertura_cont, y = n_huelgas, label = ID2)) +
@@ -201,5 +224,7 @@ data %>%
   theme_bw() +
   theme(legend.position="bottom")
 
-ggsave("output/img/graficos_ene_dtrraa/cobertura_nhuelgas_1119ID2.png", last_plot(),
-       width = 10, height = 8)
+
+ggsave("output/img/graficos_ene_dtrraa/cobertura_nhuelgas_1023ID2.png", last_plot(),
+       width = 12, height = 10)
+

@@ -12,31 +12,28 @@ pacman::p_load(tidyverse,
                patchwork)
 
 # Cargar datos ------------------------------------------------------------
-dt = read_xlsx("input/data/anuario_dt.xlsx",
-               sheet = "resumen",
-               range = "B1:J341") %>% 
-  mutate(actividad_raw = factor(actividad_raw))
+dt = readRDS("input/data/dt/datos_anuario_armonizado.rds") %>% 
+  mutate(CAENES_1d = factor(CAENES_1d))
 
 ohl = readRDS("output/data/ohl.rds")
 
 data = merge(dt %>%
-              filter(ano %in% c(1998:2019) & !is.na(actividad_raw)) %>%
-              select(ano, actividad_raw, afiliados, ocupados_autoemp, tasa_sind, tasa_sind_per,
-                     n_sind, n_sind_mil),
+              filter(ano %in% c(1998:2020) & !is.na(CAENES_1d)) %>%
+              select(ano, CAENES_1d, afiliados),
             ohl %>%
-              filter(ano %in% c(1998:2019) & !is.na(actividad_raw)) %>%
-              group_by(ano, actividad_raw) %>%
+              filter(ano %in% c(1998:2020) & !is.na(CAENES_1d)) %>%
+              group_by(ano, CAENES_1d) %>%
               summarise(n_huelgas = n(),
                         dptp = round(mean(dptp, na.rm = T), 2),
                         tc = round(mean(tc, na.rm = T), 2)) %>%
               ungroup(),
-            by = c("ano", "actividad_raw")) %>% 
-  arrange(actividad_raw, ano) %>% 
-  mutate(across(c(afiliados, ocupados_autoemp, tasa_sind, tasa_sind_per,
-                  n_sind, n_sind_mil, n_huelgas, dptp, tc),
+            by = c("ano", "CAENES_1d")) %>% 
+  arrange(CAENES_1d, ano) %>% 
+  mutate(across(c(afiliados, 
+                  n_huelgas, dptp, tc),
                 ~lag(.),
                 .names = "lag_{.col}")) %>% 
-  arrange(ano, actividad_raw) #%>% 
+  arrange(ano, CAENES_1d) #%>% 
   #filter(ano != "1998")
 
 
